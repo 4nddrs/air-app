@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js"
+        integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <title>TicketsFly</title>
+</head>
+
+<body>
+    <header>
+        <div class="brand-logo">
+            <i class="fas fa-paper-plane"></i>
+            <div class="brand-logo-name">TicketsFly</div>
+        </div>
+    </header>
+
+    <section class="main-section">
+        <div class="container-l">
+            <h1>Book your flight with us!</h1>
+            <div class="flight-container">
+                 <label>I am buying from</label>
+                <select id="" class="flight-select">
+                    <option value="0" selected>Chicago, US</option>
+                    <option value="1">Miami, US</option>
+                    <option value="2">Houston, US</option>
+
+                </select>
+                <label>Select a flight:</label>
+                <select id="flight-select" class="flight-select">
+                    <option value="0" selected>New-York, US - Chicago, US</option>
+                    <option value="1">New-York, US - Miami, US</option>
+                    <option value="2">New-York, US - Houston, US</option>
+                    <option value="3">New-York, US - Austin, US</option>
+                    <option value="4">New-York, US - San-Francisco, US</option>
+                    <option value="5">New-York, US - Seattle, US</option>
+                    <option value="6">New-York, US - Montreal, Canada</option>
+                    <option value="7">New-York, US - Toronto, Canada</option>
+                </select>
+                 <label>Select a Airplane:</label>
+                <select id="class-select" class="flight-select">
+                    <option value="Boeing737" selected>Boeing 737</option>
+                    <option value="AirbusA320">Airbus A320</option>
+                    <option value="Boeing787">Boeing 787</option>
+                    <option value="Cessna172">Cessna 172</option>
+                    <option value="Concorde">Concorde</option>
+                    <option value="EmbraerE190">Embraer E190</option>
+                </select>
+            </div>
+    
+            <div class="showcase">
+                <h2 class="guide-title">Seats guide</h2>
+                <ul class="showcase-content">
+                    <li>
+                        <div class="prenium-content">
+                            <div class="seat prenium"></div>
+                            <small class="seat-type">prenium seat</small>
+                        </div>
+                        <div class="wrap">
+                            <div class="dot"></div>
+                            <small class="seat-price" id="seat-prenium-price">0</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="legroom-content">
+                            <div class="seat legroom"></div>
+                            <small class="seat-type">Extra legroom seat</small>
+                        </div>
+                        <div class="wrap">
+                            <div class="dot"></div>
+                            <small class="seat-price" id="seat-legroom-price">0</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="front-content">
+                            <div class="seat front"></div>
+                            <small class="seat-type">Front seat</small>
+                        </div>
+                        <div class="wrap">
+                            <div class="dot"></div>
+                            <small class="seat-price" id="seat-front-price">0</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="standard-content">
+                            <div class="seat standard"></div>
+                            <small class="seat-type">Standard seat</small>
+                        </div>
+                        <div class="wrap">
+                            <div class="dot"></div>
+                            <small class="seat-price" id="seat-standard-price">0</small>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="seat unavailable"></div>
+                        <small class="seat-type">Occupied</small>
+                    </li>
+                </ul>
+            </div>
+            <div id="order-container" class="order-container">
+                <h2 class="order-title">Your order</h2>
+                <p id="countText" class="text">
+                    You have selected <span>0</span> seat for a total price of <span>0</span>
+                </p>
+                <form id="order-form" class="order-form">
+                    <div id="detail-container" class="detail-container"></div>
+                    <button id="book-btn" class="book-btn" type="submit">Book now</button>
+                    <small id="error-msg" class="error-msg">Error message</small>
+                </form>
+            </div>
+        </div>
+
+        <!-- <div class="container-r">
+            <h1 class="map-title">Travellers cabin map: pick your seats</h1>
+            <div class="seat-map">
+                <div class="row">
+                    <div class="column-left">
+                        <div class="col-lab">A</div>
+                        <div class="col-lab">B</div>
+                        <div class="col-lab">C</div>
+                    </div>
+                    <div class="central"></div>
+                    <div class="column-right">
+                        <div class="col-lab">D</div>
+                        <div class="col-lab">E</div>
+                        <div class="col-lab">F</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat unavailable"><span>A01</span></div>
+                        <div class="seat unavailable"><span>B01</span></div>
+                        <div class="seat prenium"><span>C01</span></div>
+                    </div>
+                    <div class="central">1</div>
+                    <div class="row right">
+                        <div class="seat prenium"><span>D01</span></div>
+                        <div class="seat prenium"><span>E01</span></div>
+                        <div class="seat prenium"><span>F01</span></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat prenium"><span>A02</span></div>
+                        <div class="seat prenium"><span>B02</span></div>
+                        <div class="seat prenium"><span>C02</span></div>
+                    </div>
+                    <div class="central">2</div>
+                    <div class="row right">
+                        <div class="seat prenium"><span>D02</span></div>
+                        <div class="seat prenium"><span>E02</span></div>
+                        <div class="seat unavailable"><span>F02</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat legroom"><span>A03</span></div>
+                        <div class="seat legroom"><span>B03</span></div>
+                        <div class="seat legroom"><span>C03</span></div>
+                    </div>
+                    <div class="central">3</div>
+                    <div class="row right">
+                        <div class="seat legroom"><span>D03</span></div>
+                        <div class="seat legroom"><span>E03</span></div>
+                        <div class="seat unavailable"><span>F03</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat legroom"><span>A04</span></div>
+                        <div class="seat unavailable"><span>B04</span></div>
+                        <div class="seat unavailable"><span>C04</span></div>
+                    </div>
+                    <div class="central">4</div>
+                    <div class="row right">
+                        <div class="seat legroom"><span>D04</span></div>
+                        <div class="seat legroom"><span>E04</span></div>
+                        <div class="seat legroom"><span>F04</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat front"><span>A05</span></div>
+                        <div class="seat front"><span>B05</span></div>
+                        <div class="seat front"><span>C05</span></div>
+                    </div>
+                    <div class="central">5</div>
+                    <div class="row right">
+                        <div class="seat front"><span>D05</span></div>
+                        <div class="seat front"><span>E05</span></div>
+                        <div class="seat front"><span>F05</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat front"><span>A06</span></div>
+                        <div class="seat front"><span>B06</span></div>
+                        <div class="seat front"><span>C06</span></div>
+                    </div>
+                    <div class="central">6</div>
+                    <div class="row right">
+                        <div class="seat front"><span>D06</span></div>
+                        <div class="seat unavailable"><span>E06</span></div>
+                        <div class="seat unavailable"><span>F06</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat front"><span>A07</span></div>
+                        <div class="seat front"><span>B07</span></div>
+                        <div class="seat front"><span>C07</span></div>
+                    </div>
+                    <div class="central">7</div>
+                    <div class="row right">
+                        <div class="seat front"><span>D07</span></div>
+                        <div class="seat unavailable"><span>E07</span></div>
+                        <div class="seat unavailable"><span>F07</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat front"><span>A08</span></div>
+                        <div class="seat front"><span>B08</span></div>
+                        <div class="seat front"><span>C08</span></div>
+                    </div>
+                    <div class="central">8</div>
+                    <div class="row right">
+                        <div class="seat front"><span>D08</span></div>
+                        <div class="seat front"><span>E08</span></div>
+                        <div class="seat front"><span>F08</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A09</span></div>
+                        <div class="seat unavailable"><span>B09</span></div>
+                        <div class="seat unavailable"><span>C09</span></div>
+                    </div>
+                    <div class="central">9</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>D09</span></div>
+                        <div class="seat standard"><span>E09</span></div>
+                        <div class="seat standard"><span>F09</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A10</span></div>
+                        <div class="seat standard"><span>B10</span></div>
+                        <div class="seat standard"><span>C10</span></div>
+                    </div>
+                    <div class="central">10</div>
+                    <div class="row right">
+                        <div class="seat unavailable"><span>D10</span></div>
+                        <div class="seat standard"><span>E10</span></div>
+                        <div class="seat standard"><span>F10</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A11</span></div>
+                        <div class="seat standard"><span>B11</span></div>
+                        <div class="seat standard"><span>C11</span></div>
+                    </div>
+                    <div class="central">11</div>
+                    <div class="row right">
+                        <div class="seat unavailable"><span>D11</span></div>
+                        <div class="seat unavailable"><span>E11</span></div>
+                        <div class="seat standard"><span>F11</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A12</span></div>
+                        <div class="seat standard"><span>B12</span></div>
+                        <div class="seat standard"><span>C12</span></div>
+                    </div>
+                    <div class="central">12</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>D12</span></div>
+                        <div class="seat standard"><span>E12</span></div>
+                        <div class="seat standard"><span>F12</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat unavailable"><span>A13</span></div>
+                        <div class="seat unavailable"><span>B13</span></div>
+                        <div class="seat unavailable"><span>C13</span></div>
+                    </div>
+                    <div class="central">13</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>D13</span></div>
+                        <div class="seat standard"><span>E13</span></div>
+                        <div class="seat unavailable"><span>F13</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A14</span></div>
+                        <div class="seat standard"><span>B14</span></div>
+                        <div class="seat unavailable"><span>C14</span></div>
+                    </div>
+                    <div class="central">14</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>D14</span></div>
+                        <div class="seat standard"><span>E14</span></div>
+                        <div class="seat standard"><span>F14</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A15</span></div>
+                        <div class="seat standard"><span>B15</span></div>
+                        <div class="seat standard"><span>C15</span></div>
+                    </div>
+                    <div class="central">15</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>E15</span></div>
+                        <div class="seat unavailable"><span>F15</span></div>
+                        <div class="seat unavailable"><span>F15</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row left">
+                        <div class="seat standard"><span>A16</span></div>
+                        <div class="seat unavailable"><span>B16</span></div>
+                        <div class="seat standard"><span>C16</span></div>
+                    </div>
+                    <div class="central">16</div>
+                    <div class="row right">
+                        <div class="seat standard"><span>D16</span></div>
+                        <div class="seat standard"><span>E16</span></div>
+                        <div class="seat standard"><span>F16</span></div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="container-r">
+            <h1 class="map-title">Travellers cabin map: pick your seats</h1>
+            <div class="seat-map" id="seat-map"></div>
+        </div>
+    </section>
+
+    <!-- Confirmation message -->
+
+    <div id="message" class="message-container">
+        <div class="message">
+            <button id="close-msg" class="close-btn">
+                <i class="far fa-times-circle"></i>
+            </button>
+            <div class="message-header">
+                <h3 class="title"><i class="fas fa-check-circle"></i><span class="order-confirm">Order confirmed</span></h3>
+            </div>
+            <div class="message-content">
+                <p class="msg">
+                    <span>Your order has been received.</span>
+                    <span id="detail-output">Detail output</span>
+                </p>
+                <!-- Input for name -->
+                <div class="name-input">
+                    <label for="customer-name">Enter your name:</label>
+                    <input type="text" id="customer-name" placeholder="Enter name">
+                </div>
+            </div>
+            <div class="message-buttons">
+                <button id="buy-btn" class="btn">Comprar</button>
+                <button id="reserve-btn" class="btn">Reservar</button>
+            </div>
+            <div class="paper-plane">
+                <img src="paper-plane.png" alt="Paper plane">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="control.js"></script>
+    
+
+<div class="seat-map" id="seat-map"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 📌 Datos de los aviones
+    const seatConfigurations = {
+   Boeing737: [
+    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01'], unavailable: ['A01'], prenium: ['C01'] },
+    { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02'], unavailable: ['F02'], prenium: ['A02', 'B02', 'C02', 'D02', 'E02'] },
+    { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03'], unavailable: ['F03'], standard: ['A03', 'B03', 'C03', 'D03', 'E03'] },
+    { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04'], unavailable: ['B04', 'C04'], standard: ['A04', 'D04', 'E04', 'F04'] },
+    { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'], standard: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'] },
+    { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06'], unavailable: ['E06', 'F06'], standard: ['A06', 'B06', 'C06', 'D06'] },
+    { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07'], unavailable: ['E07', 'F07'], standard: ['A07', 'B07', 'C07', 'D07'] },
+    { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'], standard: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'] },
+    { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09'], unavailable: ['B09', 'C09'], standard: ['A09', 'D09', 'E09', 'F09'] },
+    { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10'], unavailable: ['D10'], standard: ['A10', 'B10', 'C10', 'E10', 'F10'] },
+    { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'] },
+    { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'], standard: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'] },
+    { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'] },
+    { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'] },
+    { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15'], unavailable: ['C15', 'D15'], standard: ['A15', 'B15', 'E15', 'F15'] },
+    { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'], standard: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'] },
+    { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'] },
+    { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'] },
+    { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'] },
+    { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20'], unavailable: ['E20', 'F20'], standard: ['A20', 'B20', 'C20', 'D20'] },
+    { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'] },
+    { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'] },
+    { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'] },
+    { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24'], unavailable: ['C24', 'D24'], standard: ['A24', 'B24', 'E24', 'F24'] },
+    { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'] },
+    { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'] },
+    { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'] },
+    { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'], standard: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'] },
+    { row: 29, seats: ['A29', 'B29', 'C29', 'D29', 'E29', 'F29'], unavailable: ['A29', 'F29'], standard: ['B29', 'C29', 'D29', 'E29'] },
+    { row: 30, seats: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30'], standard: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30'] }
+],
+  AirbusA320: [
+    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01'], unavailable: ['A01'], prenium: ['C01'] },
+    { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02'], unavailable: ['F02'], prenium: ['A02', 'B02', 'C02', 'D02', 'E02'] },
+    { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03'], legroom: ['A03', 'B03', 'C03', 'D03', 'E03'] },
+    { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04'], unavailable: ['B04', 'C04'], legroom: ['A04', 'D04', 'E04', 'F04'] },
+    { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'], front: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'] },
+    { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06'], unavailable: ['E06', 'F06'], front: ['A06', 'B06', 'C06', 'D06'] },
+    { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07'], unavailable: ['E07', 'F07'], front: ['A07', 'B07', 'C07', 'D07'] },
+    { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'], front: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'] },
+    { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09'], unavailable: ['B09', 'C09'], standard: ['A09', 'D09', 'E09', 'F09'] },
+    { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10'], unavailable: ['D10'], standard: ['A10', 'B10', 'C10', 'E10', 'F10'] },
+    { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'] },
+    { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'], legroom: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'] },
+    { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'] },
+    { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'] },
+    { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15'], unavailable: ['C15', 'D15'], standard: ['A15', 'B15', 'E15', 'F15'] },
+    { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'], front: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'] },
+    { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'] },
+    { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'] },
+    { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'] },
+    { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20'], unavailable: ['E20', 'F20'], standard: ['A20', 'B20', 'C20', 'D20'] },
+    { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'] },
+    { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'] },
+    { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'] },
+    { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24'], unavailable: ['C24', 'D24'], standard: ['A24', 'B24', 'E24', 'F24'] },
+    { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'] },
+    { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'] },
+    { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'] },
+    { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'], standard: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'] }
+],
+   Boeing787: [
+    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01', 'G01', 'H01', 'I01'], unavailable: ['A01'], prenium: ['C01', 'D01'] },
+        { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02', 'G02', 'H02', 'I02'], unavailable: ['A02'], prenium: ['B02', 'C02', 'D02', 'E02'] },
+        { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03', 'G03', 'H03', 'I03'], legroom: ['A03', 'B03', 'C03', 'D03', 'E03'] },
+        { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04', 'G04', 'H04', 'I04'], unavailable: ['I04'], legroom: ['A04', 'B04', 'C04'] },
+        { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05', 'G05', 'H05', 'I05'], front: ['A05', 'B05', 'C05', 'D05', 'E05'] },
+        { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06', 'G06', 'H06', 'I06'], unavailable: ['F06'], front: ['A06', 'B06', 'C06', 'D06'] },
+        { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07', 'G07', 'H07', 'I07'], unavailable: ['E07', 'F07'], front: ['A07', 'B07', 'C07', 'D07'] },
+        { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08', 'G08', 'H08', 'I08'], front: ['A08', 'B08', 'C08', 'D08', 'E08'] },
+        { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09', 'G09', 'H09', 'I09'], standard: ['A09', 'B09', 'C09', 'D09', 'E09'] },
+        { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10', 'G10', 'H10', 'I10'], standard: ['A10', 'B10', 'C10', 'D10', 'E10'] },
+        { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11', 'G11', 'H11', 'I11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11'] },
+        { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12', 'G12', 'H12', 'I12'], legroom: ['A12', 'B12', 'C12', 'D12', 'E12'] },
+        { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13', 'G13', 'H13', 'I13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13'] },
+        { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14', 'G14', 'H14', 'I14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14'] },
+        { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15', 'G15', 'H15', 'I15'], unavailable: ['D15'], standard: ['A15', 'B15', 'C15', 'E15', 'F15'] },
+        { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16', 'G16', 'H16', 'I16'], front: ['A16', 'B16', 'C16', 'D16', 'E16'] },
+        { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17', 'G17', 'H17', 'I17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17'] },
+        { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18', 'G18', 'H18', 'I18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18'] },
+        { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19', 'G19', 'H19', 'I19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19'] },
+        { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20', 'G20', 'H20', 'I20'], unavailable: ['I20'], standard: ['A20', 'B20', 'C20', 'D20', 'E20'] },
+        { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21', 'G21', 'H21', 'I21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21'] },
+        { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22', 'G22', 'H22', 'I22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22'] },
+        { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23', 'G23', 'H23', 'I23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23'] },
+        { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24', 'G24', 'H24', 'I24'], unavailable: ['B24'], standard: ['A24', 'C24', 'D24', 'E24', 'F24'] },
+        { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25', 'G25', 'H25', 'I25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25'] },
+        { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26', 'G26', 'H26', 'I26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26'] },
+        { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27', 'G27', 'H27', 'I27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27'] },
+        { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28', 'G28', 'H28', 'I28'], unavailable: ['A28'], standard: ['B28', 'C28', 'D28', 'E28', 'F28'] },
+        { row: 29, seats: ['A29', 'B29', 'C29', 'D29', 'E29', 'F29', 'G29', 'H29', 'I29'], standard: ['A29', 'B29', 'C29', 'D29', 'E29'] },
+        { row: 30, seats: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30', 'G30', 'H30', 'I30'], standard: ['A30', 'B30', 'C30', 'D30', 'E30'] },
+        { row: 31, seats: ['A31', 'B31', 'C31', 'D31', 'E31', 'F31', 'G31', 'H31', 'I31'], standard: ['A31', 'B31', 'C31', 'D31', 'E31'] },
+        { row: 32, seats: ['A32', 'B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32'], standard: ['A32', 'B32', 'C32', 'D32', 'E32'] },
+        { row: 33, seats: ['A33', 'B33', 'C33', 'D33', 'E33', 'F33', 'G33', 'H33', 'I33'], standard: ['A33', 'B33', 'C33', 'D33', 'E33'] },
+        { row: 34, seats: ['A34', 'B34', 'C34', 'D34', 'E34', 'F34', 'G34', 'H34', 'I34'], unavailable: ['A34'], standard: ['B34', 'C34', 'D34', 'E34'] },
+        { row: 35, seats: ['A35', 'B35', 'C35', 'D35', 'E35', 'F35', 'G35', 'H35', 'I35'], standard: ['A35', 'B35', 'C35', 'D35', 'E35'] }
+    ],
+
+  Concorde: [
+    { row: 1, seats: ['A01', 'B01', 'C01', 'D01'], unavailable: ['A01'], prenium: ['C01', 'D01'] },
+    { row: 2, seats: ['A02', 'B02', 'C02', 'D02'], unavailable: ['D02'], prenium: ['A02', 'B02'] },
+    { row: 3, seats: ['A03', 'B03', 'C03', 'D03'], legroom: ['A03', 'B03', 'C03', 'D03'] },
+    { row: 4, seats: ['A04', 'B04', 'C04', 'D04'], unavailable: ['C04'], legroom: ['A04', 'B04', 'D04'] },
+    { row: 5, seats: ['A05', 'B05', 'C05', 'D05'], front: ['A05', 'B05', 'C05', 'D05'] },
+    { row: 6, seats: ['A06', 'B06', 'C06', 'D06'], unavailable: ['D06'], front: ['A06', 'B06', 'C06'] },
+    { row: 7, seats: ['A07', 'B07', 'C07', 'D07'], unavailable: ['B07'], front: ['A07', 'C07', 'D07'] },
+    { row: 8, seats: ['A08', 'B08', 'C08', 'D08'], front: ['A08', 'B08', 'C08', 'D08'] },
+    { row: 9, seats: ['A09', 'B09', 'C09', 'D09'], standard: ['A09', 'B09', 'C09', 'D09'] },
+    { row: 10, seats: ['A10', 'B10', 'C10', 'D10'], standard: ['A10', 'B10', 'C10', 'D10'] },
+    { row: 11, seats: ['A11', 'B11', 'C11', 'D11'], standard: ['A11', 'B11', 'C11', 'D11'] },
+    { row: 12, seats: ['A12', 'B12', 'C12', 'D12'], legroom: ['A12', 'B12', 'C12', 'D12'] },
+    { row: 13, seats: ['A13', 'B13', 'C13', 'D13'], standard: ['A13', 'B13', 'C13', 'D13'] },
+    { row: 14, seats: ['A14', 'B14', 'C14', 'D14'], standard: ['A14', 'B14', 'C14', 'D14'] },
+    { row: 15, seats: ['A15', 'B15', 'C15', 'D15'], unavailable: ['C15'], standard: ['A15', 'B15', 'D15'] },
+    { row: 16, seats: ['A16', 'B16', 'C16', 'D16'], front: ['A16', 'B16', 'C16', 'D16'] },
+    { row: 17, seats: ['A17', 'B17', 'C17', 'D17'], standard: ['A17', 'B17', 'C17', 'D17'] },
+    { row: 18, seats: ['A18', 'B18', 'C18', 'D18'], standard: ['A18', 'B18', 'C18', 'D18'] },
+    { row: 19, seats: ['A19', 'B19', 'C19', 'D19'], standard: ['A19', 'B19', 'C19', 'D19'] },
+    { row: 20, seats: ['A20', 'B20', 'C20', 'D20'], unavailable: ['D20'], standard: ['A20', 'B20', 'C20'] },
+    { row: 21, seats: ['A21', 'B21', 'C21', 'D21'], standard: ['A21', 'B21', 'C21', 'D21'] },
+    { row: 22, seats: ['A22', 'B22', 'C22', 'D22'], standard: ['A22', 'B22', 'C22', 'D22'] },
+    { row: 23, seats: ['A23', 'B23', 'C23', 'D23'], standard: ['A23', 'B23', 'C23', 'D23'] },
+    { row: 24, seats: ['A24', 'B24', 'C24', 'D24'], unavailable: ['C24'], standard: ['A24', 'B24', 'D24'] },
+    { row: 25, seats: ['A25', 'B25', 'C25', 'D25'], standard: ['A25', 'B25', 'C25', 'D25'] }
+  ],
+   Cessna172: [
+    { row: 1, seats: ['A01', 'B01'], unavailable: ['A01'], prenium: ['B01'] },
+    { row: 2, seats: ['A02', 'B02'], unavailable: [], prenium: [] },
+    { row: 3, seats: ['A03', 'B03'], unavailable: [], prenium: [] },
+    { row: 4, seats: ['A04', 'B04'], unavailable: [], prenium: [] },
+  ],
+  EmbraerE190: [
+    { row: 1, seats: ['A01', 'B01', 'C01', 'D01'], unavailable: ['A01'], prenium: [] },
+    { row: 2, seats: ['A02', 'B02', 'C02', 'D02'], unavailable: [], prenium: [] },
+    { row: 3, seats: ['A03', 'B03', 'C03', 'D03'], unavailable: [], prenium: [] },
+    { row: 4, seats: ['A04', 'B04', 'C04', 'D04'], unavailable: [], prenium: [] },
+    { row: 5, seats: ['A05', 'B05', 'C05', 'D05'], unavailable: [], prenium: [] },
+    { row: 6, seats: ['A06', 'B06', 'C06', 'D06'], unavailable: [], prenium: [] },
+    { row: 7, seats: ['A07', 'B07', 'C07', 'D07'], unavailable: [], prenium: [] },
+    { row: 8, seats: ['A08', 'B08', 'C08', 'D08'], unavailable: [], prenium: [] },
+    { row: 9, seats: ['A09', 'B09', 'C09', 'D09'], unavailable: [], prenium: [] },
+    { row: 10, seats: ['A10', 'B10', 'C10', 'D10'], unavailable: [], prenium: [] },
+    { row: 11, seats: ['A11', 'B11', 'C11', 'D11'], unavailable: [], prenium: [] },
+    { row: 12, seats: ['A12', 'B12', 'C12', 'D12'], unavailable: [], prenium: [] },
+    { row: 13, seats: ['A13', 'B13', 'C13', 'D13'], unavailable: [], prenium: [] },
+    { row: 14, seats: ['A14', 'B14', 'C14', 'D14'], unavailable: [], prenium: [] },
+    { row: 15, seats: ['A15', 'B15', 'C15', 'D15'], unavailable: [], prenium: [] },
+    { row: 16, seats: ['A16', 'B16', 'C16', 'D16'], unavailable: [], prenium: [] },
+    { row: 17, seats: ['A17', 'B17', 'C17', 'D17'], unavailable: [], prenium: [] },
+    { row: 18, seats: ['A18', 'B18', 'C18', 'D18'], unavailable: [], prenium: [] },
+    { row: 19, seats: ['A19', 'B19', 'C19', 'D19'], unavailable: [], prenium: [] },
+    { row: 20, seats: ['A20', 'B20', 'C20', 'D20'], unavailable: [], prenium: [] },
+    { row: 21, seats: ['A21', 'B21', 'C21', 'D21'], unavailable: [], prenium: [] },
+    { row: 22, seats: ['A22', 'B22', 'C22', 'D22'], unavailable: [], prenium: [] },
+    { row: 23, seats: ['A23', 'B23', 'C23', 'D23'], unavailable: [], prenium: [] },
+    { row: 24, seats: ['A24', 'B24', 'C24', 'D24'], unavailable: [], prenium: [] },
+  ],
+    };
+
+    function renderSeatMap(airplane) {
+      const seatData = seatConfigurations[airplane] || [];
+      const seatMapContainer = document.getElementById('seat-map');
+      seatMapContainer.innerHTML = ""; // 🔄 Limpiar el mapa antes de renderizar
+
+      seatData.forEach(rowData => {
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row');
+
+        const leftColumn = document.createElement('div');
+        leftColumn.classList.add('column-left');
+
+        rowData.seats.slice(0, Math.ceil(rowData.seats.length / 2)).forEach(seat => {
+          leftColumn.appendChild(createSeatDiv(seat, rowData));
+        });
+
+        const centralDiv = document.createElement('div');
+        centralDiv.classList.add('central');
+        centralDiv.innerText = rowData.row;
+
+        const rightColumn = document.createElement('div');
+        rightColumn.classList.add('column-right');
+
+        rowData.seats.slice(Math.ceil(rowData.seats.length / 2)).forEach(seat => {
+          rightColumn.appendChild(createSeatDiv(seat, rowData));
+        });
+
+        rowDiv.appendChild(leftColumn);
+        rowDiv.appendChild(centralDiv);
+        rowDiv.appendChild(rightColumn);
+        seatMapContainer.appendChild(rowDiv);
+      });
+    }
+
+    function createSeatDiv(seat, rowData) {
+      const seatDiv = document.createElement('div');
+      seatDiv.classList.add('seat');
+
+      // ✅ Asignar clases según tipo de asiento
+      if (rowData.unavailable?.includes(seat)) {
+        seatDiv.classList.add('unavailable');
+      } else if (rowData.prenium?.includes(seat)) {
+        seatDiv.classList.add('prenium');
+      } else if (rowData.legroom?.includes(seat)) {
+        seatDiv.classList.add('legroom');
+      } else if (rowData.front?.includes(seat)) {
+        seatDiv.classList.add('front');
+      } else {
+        seatDiv.classList.add('standard');
+      }
+
+      seatDiv.innerHTML = `<span>${seat}</span>`;
+      return seatDiv;
+    }
+
+    // 🚀 Cargar Boeing 737 por defecto
+    renderSeatMap("Boeing737");
+
+    // 🎛️ Evento para cambiar el mapa de asientos
+    document.getElementById("class-select").addEventListener("change", function (event) {
+      renderSeatMap(event.target.value);
+    });
+  });
+</script>
+
+
+
+</body>
+
+</html>
