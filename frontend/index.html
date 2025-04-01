@@ -9,14 +9,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js"
         integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin="anonymous"></script>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-    <title>TicketsFly</title>
+    <title>Aerolíneas Rafael Pabón</title>
 </head>
 
 <body>
     <header>
         <div class="brand-logo">
             <i class="fas fa-paper-plane"></i>
-            <div class="brand-logo-name">TicketsFly</div>
+            <div class="brand-logo-name">Aerolíneas Rafael Pabón</div>
         </div>
     </header>
 
@@ -50,7 +50,11 @@
                     <option value="Cessna172">Cessna 172</option>
                     <option value="Concorde">Concorde</option>
                     <option value="EmbraerE190">Embraer E190</option>
-                </select>
+                </select>   
+                
+                <label>Departure Date:</label>
+                <input type="date" id="departure-date" class="flight-select" />
+
             </div>
     
             <div class="showcase">
@@ -66,7 +70,7 @@
                             <small class="seat-price" id="seat-prenium-price">0</small>
                         </div>
                     </li>
-                    <li>
+                    <!-- <li>
                         <div class="legroom-content">
                             <div class="seat legroom"></div>
                             <small class="seat-type">Extra legroom seat</small>
@@ -85,7 +89,7 @@
                             <div class="dot"></div>
                             <small class="seat-price" id="seat-front-price">0</small>
                         </div>
-                    </li>
+                    </li> -->
                     <li>
                         <div class="standard-content">
                             <div class="seat standard"></div>
@@ -364,8 +368,13 @@
                     <span>Your order has been received.</span>
                     <span id="detail-output">Detail output</span>
                 </p>
-                <!-- Input for name -->
+                <!-- Input for passport -->
                 <div class="name-input">
+                    <label for="customer-passport">Enter your passport:</label>
+                    <input type="number" id="customer-passport" placeholder="Enter passport">
+                </div>
+                 <!-- Input for name -->
+                 <div class="name-input">
                     <label for="customer-name">Enter your name:</label>
                     <input type="text" id="customer-name" placeholder="Enter name">
                 </div>

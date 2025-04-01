@@ -1,8 +1,6 @@
 // Main page
 const flightSelect = document.getElementById('flight-select');
 const preniumPrice = document.getElementById('seat-prenium-price');
-const legroomPrice = document.getElementById('seat-legroom-price');
-const frontPrice = document.getElementById('seat-front-price');
 const standardPrice = document.getElementById('seat-standard-price');
 const orderContainer = document.getElementById('order-container');
 const detailContainer = document.getElementById('detail-container');
@@ -44,12 +42,12 @@ const closeDescriptionBtn = document.getElementById('close-description');
 
 // Ticket price per flight and per type of seat -- ex: 'NY-CH' is element[0] => [prenium ticket price[0], 
 // legroom ticket price[1], front ticket price[2], standard ticket price[3]]
-const data = [[200, 140, 90, 80], [240, 180, 130, 120], [280, 220, 170, 160], [350, 290, 240, 230], [370, 310, 260, 250],
-[390, 330, 270, 260], [300, 240, 190, 180], [270, 210, 160, 150]];
+const data = [[200, 80], [240, 120], [280, 160], [350, 230], [370, 250],
+[390, 260], [300, 180], [270, 150]];
 
 // Initialize ticket prices in showcase with data from index [0] of the above data array
 const initialFlightRates = data[0];
-let [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = initialFlightRates;
+let [preniumTicketPrice, standardTicketPrice] = initialFlightRates;
 
 const initIndexUnavailableSeats = [...unavailableSeats].map(seat => [...allSeats].indexOf(seat));
 
@@ -80,8 +78,6 @@ function setFlightData(flightIndex, flightName, currentFlightRates) {
 function updateShowcaseContent() {
 
     preniumPrice.innerText = formatMoney(preniumTicketPrice);
-    legroomPrice.innerText = formatMoney(legroomTicketPrice);
-    frontPrice.innerText = formatMoney(frontTicketPrice);
     standardPrice.innerText = formatMoney(standardTicketPrice);
 
 }
@@ -97,18 +93,12 @@ function formatMoney(number) {
 function updateSelectedCount() {
 
     const selectedPreniumSeats = document.querySelectorAll('.row .seat.prenium.selected');
-    const selectedLegroomSeats = document.querySelectorAll('.row .seat.legroom.selected');
-    const selectedFrontSeats = document.querySelectorAll('.row .seat.front.selected');
     const selectedStandardSeats = document.querySelectorAll('.row .seat.standard.selected');
 
     let selectedSeatsCount = (selectedPreniumSeats.length)
-        + (selectedLegroomSeats.length)
-        + (selectedFrontSeats.length)
         + (selectedStandardSeats.length);
 
     currentTotalAmount = (selectedPreniumSeats.length * preniumTicketPrice)
-        + (selectedLegroomSeats.length * legroomTicketPrice)
-        + (selectedFrontSeats.length * frontTicketPrice)
         + (selectedStandardSeats.length * standardTicketPrice);
 
     if (selectedSeatsCount <= 1) {
@@ -118,16 +108,14 @@ function updateSelectedCount() {
     }
 
     let detailPreniumSeats = [selectedPreniumSeats.length, preniumTicketPrice];
-    let detailLegroomSeats = [selectedLegroomSeats.length, legroomTicketPrice];
-    let detailFrontSeats = [selectedFrontSeats.length, frontTicketPrice];
     let detailStandardSeats = [selectedStandardSeats.length, standardTicketPrice];
 
     // Spread operator - Initialize order data based on selected seats (user selection)
-    let orderData = [...detailPreniumSeats, ...detailLegroomSeats, ...detailFrontSeats, ...detailStandardSeats];
+    let orderData = [...detailPreniumSeats, ...detailStandardSeats];
 
     addDataSelection(orderData);
 
-    const seatsIndex = [...selectedPreniumSeats, ...selectedLegroomSeats, ...selectedFrontSeats, ...selectedStandardSeats].map(seat => [...availableSeats].indexOf(seat));
+    const seatsIndex = [...selectedPreniumSeats, ...selectedStandardSeats].map(seat => [...availableSeats].indexOf(seat));
 
     localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
 
@@ -151,7 +139,7 @@ function addDataSelection(arr) {
 // Return a clean array of data for order detail display (DOM update)
 function cleanData(arr) {
 
-    const seatTypes = ['Prenium', 'Extra-legroom', 'Front', 'Standard'];
+    const seatTypes = ['Prenium', 'Standard'];
     const ranks = ['1', '2', '3', '4'];
 
     let notNullValuesIndexes = [];
@@ -575,7 +563,7 @@ function populateUI() {
 
     const selectedFlightRates = JSON.parse(localStorage.getItem('selectedFlightRates'));
     if (selectedFlightRates !== null && selectedFlightRates.length > 0) {
-        [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = selectedFlightRates;
+        [preniumTicketPrice, standardTicketPrice] = selectedFlightRates;
     }
 
     const newSeatsConfig = JSON.parse(localStorage.getItem('indexUnavailableSeats'));
@@ -583,10 +571,6 @@ function populateUI() {
         allSeats.forEach((seat, index) => {
             if (index >= 0 && index <= 11) {
                 seat.className = 'seat prenium';
-            } else if (index >= 12 && index <= 23) {
-                seat.className = 'seat legroom';
-            } else if (index >= 24 && index <= 47) {
-                seat.className = 'seat front';
             } else if (index >= 48 && index <= 95) {
                 seat.className = 'seat standard';
             }
@@ -794,7 +778,7 @@ flightSelect.addEventListener('change', (e) => {
     currentFlight = formatFlightName(flightSelect.options[flightSelect.selectedIndex].text);
 
     // Destructuring
-    [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = currentFlightRatesArr;
+    [preniumTicketPrice, standardTicketPrice] = currentFlightRatesArr;
 
     setFlightData(e.target.selectedIndex, currentFlight, currentFlightRatesArr);
 
@@ -830,10 +814,6 @@ flightSelect.addEventListener('change', (e) => {
                 seat.classList.remove('unavailable');
                 if (index >= 0 && index <= 11) {
                     seat.classList.add('prenium');
-                } else if (index >= 12 && index <= 23) {
-                    seat.classList.add('legroom');
-                } else if (index >= 24 && index <= 47) {
-                    seat.classList.add('front');
                 } else if (index >= 48 && index <= 95) {
                     seat.classList.add('standard');
                 }

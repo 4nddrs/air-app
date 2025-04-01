@@ -18,6 +18,11 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("🟢 Cliente conectado vía WebSocket");
 
+  socket.on("ordenVuelo", (data) => {
+    console.log("📦 Orden recibida:", data);
+    // Aquí puedes guardar la orden, imprimirla o hacer lógica extra
+  });
+
   socket.on("disconnect", () => {
     console.log("🔴 Cliente desconectado");
   });
