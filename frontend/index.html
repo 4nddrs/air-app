@@ -24,42 +24,25 @@
         <div class="container-l">
             <h1>Book your flight with us!</h1>
             <div class="flight-container">
-                 <label>I am buying from</label>
-                <select id="" class="flight-select">
-                    <option value="0" selected>Chicago, US</option>
-                    <option value="1">Miami, US</option>
-                    <option value="2">Houston, US</option>
 
-                </select>
-                <label>Load a Airplane:</label>
-                <select id="class-load" class="flight-select">
-                
-                </select> 
-    
-                <label>Select a flight:</label>
-                <select id="flight-select" class="flight-select">
-                    <option value="0" selected>New-York, US - Chicago, US</option>
-                    <option value="1">New-York, US - Miami, US</option>
-                    <option value="2">New-York, US - Houston, US</option>
-                    <option value="3">New-York, US - Austin, US</option>
-                    <option value="4">New-York, US - San-Francisco, US</option>
-                    <option value="5">New-York, US - Seattle, US</option>
-                    <option value="6">New-York, US - Montreal, Canada</option>
-                    <option value="7">New-York, US - Toronto, Canada</option>
-                </select>
-                 <label>Select a Airplane:</label>
-                <select id="class-select" class="flight-select">
-                    <option value="Boeing737" selected>Boeing 737</option>
-                    <option value="AirbusA320">Airbus A320</option>
-                    <option value="Boeing787">Boeing 787</option>
-                    <option value="Cessna172">Cessna 172</option>
-                    <option value="Concorde">Concorde</option>
-                    <option value="EmbraerE190">Embraer E190</option>
-                </select>   
-                
+                <label>I am buying from</label>
+<select id="from-select" class="flight-select">
+  <option selected disabled>Loading...</option>
+</select>
 
-                <label>Departure Date:</label>
-                <input type="date" id="departure-date" class="flight-select" />
+<label>Select a flight:</label>
+<select id="flight-select" class="flight-select">
+  <option selected disabled>Loading...</option>
+</select>
+
+<label>Select an Airplane:</label>
+<select id="airplane-select" class="flight-select">
+  <option selected disabled>Loading...</option>
+</select>
+
+<label>Departure Date:</label>
+<input type="date" id="departure-date" class="flight-select" />
+
 
             </div>
             <div class="showcase">
@@ -124,233 +107,7 @@
             </div>
         </div>
 
-        <!-- <div class="container-r">
-            <h1 class="map-title">Travellers cabin map: pick your seats</h1>
-            <div class="seat-map">
-                <div class="row">
-                    <div class="column-left">
-                        <div class="col-lab">A</div>
-                        <div class="col-lab">B</div>
-                        <div class="col-lab">C</div>
-                    </div>
-                    <div class="central"></div>
-                    <div class="column-right">
-                        <div class="col-lab">D</div>
-                        <div class="col-lab">E</div>
-                        <div class="col-lab">F</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat unavailable"><span>A01</span></div>
-                        <div class="seat unavailable"><span>B01</span></div>
-                        <div class="seat prenium"><span>C01</span></div>
-                    </div>
-                    <div class="central">1</div>
-                    <div class="row right">
-                        <div class="seat prenium"><span>D01</span></div>
-                        <div class="seat prenium"><span>E01</span></div>
-                        <div class="seat prenium"><span>F01</span></div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat prenium"><span>A02</span></div>
-                        <div class="seat prenium"><span>B02</span></div>
-                        <div class="seat prenium"><span>C02</span></div>
-                    </div>
-                    <div class="central">2</div>
-                    <div class="row right">
-                        <div class="seat prenium"><span>D02</span></div>
-                        <div class="seat prenium"><span>E02</span></div>
-                        <div class="seat unavailable"><span>F02</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat legroom"><span>A03</span></div>
-                        <div class="seat legroom"><span>B03</span></div>
-                        <div class="seat legroom"><span>C03</span></div>
-                    </div>
-                    <div class="central">3</div>
-                    <div class="row right">
-                        <div class="seat legroom"><span>D03</span></div>
-                        <div class="seat legroom"><span>E03</span></div>
-                        <div class="seat unavailable"><span>F03</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat legroom"><span>A04</span></div>
-                        <div class="seat unavailable"><span>B04</span></div>
-                        <div class="seat unavailable"><span>C04</span></div>
-                    </div>
-                    <div class="central">4</div>
-                    <div class="row right">
-                        <div class="seat legroom"><span>D04</span></div>
-                        <div class="seat legroom"><span>E04</span></div>
-                        <div class="seat legroom"><span>F04</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat front"><span>A05</span></div>
-                        <div class="seat front"><span>B05</span></div>
-                        <div class="seat front"><span>C05</span></div>
-                    </div>
-                    <div class="central">5</div>
-                    <div class="row right">
-                        <div class="seat front"><span>D05</span></div>
-                        <div class="seat front"><span>E05</span></div>
-                        <div class="seat front"><span>F05</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat front"><span>A06</span></div>
-                        <div class="seat front"><span>B06</span></div>
-                        <div class="seat front"><span>C06</span></div>
-                    </div>
-                    <div class="central">6</div>
-                    <div class="row right">
-                        <div class="seat front"><span>D06</span></div>
-                        <div class="seat unavailable"><span>E06</span></div>
-                        <div class="seat unavailable"><span>F06</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat front"><span>A07</span></div>
-                        <div class="seat front"><span>B07</span></div>
-                        <div class="seat front"><span>C07</span></div>
-                    </div>
-                    <div class="central">7</div>
-                    <div class="row right">
-                        <div class="seat front"><span>D07</span></div>
-                        <div class="seat unavailable"><span>E07</span></div>
-                        <div class="seat unavailable"><span>F07</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat front"><span>A08</span></div>
-                        <div class="seat front"><span>B08</span></div>
-                        <div class="seat front"><span>C08</span></div>
-                    </div>
-                    <div class="central">8</div>
-                    <div class="row right">
-                        <div class="seat front"><span>D08</span></div>
-                        <div class="seat front"><span>E08</span></div>
-                        <div class="seat front"><span>F08</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A09</span></div>
-                        <div class="seat unavailable"><span>B09</span></div>
-                        <div class="seat unavailable"><span>C09</span></div>
-                    </div>
-                    <div class="central">9</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>D09</span></div>
-                        <div class="seat standard"><span>E09</span></div>
-                        <div class="seat standard"><span>F09</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A10</span></div>
-                        <div class="seat standard"><span>B10</span></div>
-                        <div class="seat standard"><span>C10</span></div>
-                    </div>
-                    <div class="central">10</div>
-                    <div class="row right">
-                        <div class="seat unavailable"><span>D10</span></div>
-                        <div class="seat standard"><span>E10</span></div>
-                        <div class="seat standard"><span>F10</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A11</span></div>
-                        <div class="seat standard"><span>B11</span></div>
-                        <div class="seat standard"><span>C11</span></div>
-                    </div>
-                    <div class="central">11</div>
-                    <div class="row right">
-                        <div class="seat unavailable"><span>D11</span></div>
-                        <div class="seat unavailable"><span>E11</span></div>
-                        <div class="seat standard"><span>F11</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A12</span></div>
-                        <div class="seat standard"><span>B12</span></div>
-                        <div class="seat standard"><span>C12</span></div>
-                    </div>
-                    <div class="central">12</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>D12</span></div>
-                        <div class="seat standard"><span>E12</span></div>
-                        <div class="seat standard"><span>F12</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat unavailable"><span>A13</span></div>
-                        <div class="seat unavailable"><span>B13</span></div>
-                        <div class="seat unavailable"><span>C13</span></div>
-                    </div>
-                    <div class="central">13</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>D13</span></div>
-                        <div class="seat standard"><span>E13</span></div>
-                        <div class="seat unavailable"><span>F13</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A14</span></div>
-                        <div class="seat standard"><span>B14</span></div>
-                        <div class="seat unavailable"><span>C14</span></div>
-                    </div>
-                    <div class="central">14</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>D14</span></div>
-                        <div class="seat standard"><span>E14</span></div>
-                        <div class="seat standard"><span>F14</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A15</span></div>
-                        <div class="seat standard"><span>B15</span></div>
-                        <div class="seat standard"><span>C15</span></div>
-                    </div>
-                    <div class="central">15</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>E15</span></div>
-                        <div class="seat unavailable"><span>F15</span></div>
-                        <div class="seat unavailable"><span>F15</span></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row left">
-                        <div class="seat standard"><span>A16</span></div>
-                        <div class="seat unavailable"><span>B16</span></div>
-                        <div class="seat standard"><span>C16</span></div>
-                    </div>
-                    <div class="central">16</div>
-                    <div class="row right">
-                        <div class="seat standard"><span>D16</span></div>
-                        <div class="seat standard"><span>E16</span></div>
-                        <div class="seat standard"><span>F16</span></div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
+        
 
         <div class="container-r">
             <h1 class="map-title">Travellers cabin map: pick your seats</h1>
@@ -400,6 +157,95 @@
     
 
 <div class="seat-map" id="seat-map"></div>
+
+<script>
+    let todosLosVuelos = []; // 🔁 Guardar vuelos globalmente
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarVuelos();
+    });
+  
+    async function cargarVuelos() {
+      const flightSelect = document.getElementById("flight-select");
+      const fromSelect = document.getElementById("from-select");
+      const airplaneSelect = document.getElementById("airplane-select");
+      const dateInput = document.getElementById("departure-date");
+  
+      try {
+        const response = await fetch("http://localhost:3000/api/vuelos");
+        const vuelos = await response.json();
+        todosLosVuelos = vuelos; // Guardar vuelos globalmente
+  
+        // Limpiar todo
+        fromSelect.innerHTML = "";
+        flightSelect.innerHTML = "";
+        airplaneSelect.innerHTML = "";
+        dateInput.value = "";
+  
+        const origenesUnicos = new Set();
+  
+        vuelos.forEach(vuelo => {
+          origenesUnicos.add(vuelo.origen);
+        });
+  
+        // Poblar el combo "I am buying from"
+        origenesUnicos.forEach(origen => {
+          const option = document.createElement("option");
+          option.value = origen;
+          option.textContent = origen;
+          fromSelect.appendChild(option);
+        });
+  
+        // Evento: al cambiar de origen, filtrar vuelos
+        fromSelect.addEventListener("change", () => {
+          const origenSeleccionado = fromSelect.value;
+          flightSelect.innerHTML = "";
+  
+          const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
+  
+          vuelosFiltrados.forEach(vuelo => {
+            const option = document.createElement("option");
+            option.value = vuelo.id_vuelo;
+            option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
+            option.dataset.modelo = vuelo.modelo;
+            option.dataset.fecha = vuelo.fecha;
+            flightSelect.appendChild(option);
+          });
+  
+          // Seleccionar el primer vuelo si existe
+          if (flightSelect.options.length > 0) {
+            flightSelect.dispatchEvent(new Event("change"));
+          }
+        });
+  
+        // Evento: al cambiar de vuelo, actualizar avión y fecha
+        flightSelect.addEventListener("change", () => {
+          const selectedOption = flightSelect.options[flightSelect.selectedIndex];
+          const modelo = selectedOption.dataset.modelo;
+          const fecha = selectedOption.dataset.fecha;
+  
+          // Actualizar avión
+          airplaneSelect.innerHTML = "";
+          const optionModelo = document.createElement("option");
+          optionModelo.textContent = modelo;
+          airplaneSelect.appendChild(optionModelo);
+  
+          // Actualizar fecha
+          dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
+        });
+  
+        // Opcional: seleccionar el primer origen al cargar
+        if (fromSelect.options.length > 0) {
+          fromSelect.selectedIndex = 0;
+          fromSelect.dispatchEvent(new Event("change"));
+        }
+  
+      } catch (error) {
+        console.error("❌ Error al cargar datos del backend:", error);
+      }
+    }
+  </script>
+  
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -632,6 +478,7 @@
 </script>
 
 
+  
 
 </body>
 
