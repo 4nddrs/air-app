@@ -1,8 +1,11 @@
 const express = require("express");
+const cors = require("cors"); // <== 👈 Importa cors
 const http = require("http");
 const { Server } = require("socket.io");
+const { obtenerNaves } = require("./controllers/navesController");
 
 const app = express();
+app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -10,6 +13,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"], // Permite los métodos HTTP
   },
 });
+app.get("/api/naves", obtenerNaves);
 
 app.get("/", (req, res) => {
   res.send("🚀 Servidor de vuelos en ejecución");

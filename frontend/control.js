@@ -40,3 +40,30 @@ function enviarDatosAlServidor(tipo) {
     socket.emit("ordenVuelo", datos);
     console.log("📨 Datos enviados al servidor:", datos);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const selectClassLoad = document.getElementById("class-load");
+  
+    fetch("http://localhost:3000/api/naves")
+      .then(response => response.json())
+      .then(data => {
+        console.log("📦 Naves recibidas:", data); // 👈 Agrega este log para verificar
+        selectClassLoad.innerHTML = "";
+  
+        data.forEach(nave => {
+          const option = document.createElement("option");
+          option.value = nave.modelo.replace(/\s+/g, ""); // Ej: "Boeing 737" -> "Boeing737"
+          option.textContent = nave.modelo;
+          selectClassLoad.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error("❌ Error al cargar naves:", error);
+      });
+  });
+
+
+
+
+
+  
