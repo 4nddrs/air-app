@@ -25,23 +25,39 @@
             <h1>Book your flight with us!</h1>
             <div class="flight-container">
 
-                <label>I am buying from</label>
-<select id="from-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <!-- <label>I am buying from</label>
+                <select id="from-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select> -->
 
-<label>Select a flight:</label>
-<select id="flight-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <label>I am going from</label>
+                <select id="from-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
 
-<label>Select an Airplane:</label>
-<select id="airplane-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <label>I am going to</label>
+                <select id="to-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
 
-<label>Departure Date:</label>
-<input type="date" id="departure-date" class="flight-select" />
+                <label>Departure Date:</label>
+                <input type="date" id="departure-date" class="flight-select" />
+
+                <button id="btnBuscarVuelos">Buscar vuelo</button>
+
+                <br>
+                <label>Select a flight:</label>
+                <select id="flight-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
+
+                <label>Select an Airplane:</label>
+                <select id="airplane-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
+
+                
+ 
 
 
             </div>
@@ -165,85 +181,185 @@
       cargarVuelos();
     });
   
-    async function cargarVuelos() {
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarDestinos(); // Al inicio, carga los destinos
+    });
+
+    // async function cargarVuelos() {
+    //   const flightSelect = document.getElementById("flight-select");
+    //   const fromSelect = document.getElementById("from-select");
+    //   const airplaneSelect = document.getElementById("airplane-select");
+    //   const dateInput = document.getElementById("departure-date");
+  
+    //   try {
+    //     const response = await fetch("http://localhost:3000/api/vuelos");
+    //     const vuelos = await response.json();
+    //     todosLosVuelos = vuelos; // Guardar vuelos globalmente
+  
+    //     // Limpiar todo
+    //     fromSelect.innerHTML = "";
+    //     flightSelect.innerHTML = "";
+    //     airplaneSelect.innerHTML = "";
+    //     dateInput.value = "";
+  
+    //     const origenesUnicos = new Set();
+  
+    //     vuelos.forEach(vuelo => {
+    //       origenesUnicos.add(vuelo.origen);
+    //     });
+  
+    //     // Poblar el combo "I am buying from"
+    //     origenesUnicos.forEach(origen => {
+    //       const option = document.createElement("option");
+    //       option.value = origen;
+    //       option.textContent = origen;
+    //       fromSelect.appendChild(option);
+    //     });
+  
+    //     // Evento: al cambiar de origen, filtrar vuelos
+    //     fromSelect.addEventListener("change", () => {
+    //       const origenSeleccionado = fromSelect.value;
+    //       flightSelect.innerHTML = "";
+  
+    //       const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
+  
+    //       vuelosFiltrados.forEach(vuelo => {
+    //         const option = document.createElement("option");
+    //         option.value = vuelo.id_vuelo;
+    //         option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
+    //         option.dataset.modelo = vuelo.modelo;
+    //         option.dataset.fecha = vuelo.fecha;
+    //         flightSelect.appendChild(option);
+    //       });
+  
+    //       // Seleccionar el primer vuelo si existe
+    //       if (flightSelect.options.length > 0) {
+    //         flightSelect.dispatchEvent(new Event("change"));
+    //       }
+    //     });
+  
+    //     // Evento: al cambiar de vuelo, actualizar avión y fecha
+    //     flightSelect.addEventListener("change", () => {
+    //       const selectedOption = flightSelect.options[flightSelect.selectedIndex];
+    //       const modelo = selectedOption.dataset.modelo;
+    //       const fecha = selectedOption.dataset.fecha;
+  
+    //       // Actualizar avión
+    //       airplaneSelect.innerHTML = "";
+    //       const optionModelo = document.createElement("option");
+    //       optionModelo.textContent = modelo;
+    //       airplaneSelect.appendChild(optionModelo);
+  
+    //       // Actualizar fecha
+    //       dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
+    //     });
+  
+    //     // Opcional: seleccionar el primer origen al cargar
+    //     if (fromSelect.options.length > 0) {
+    //       fromSelect.selectedIndex = 0;
+    //       fromSelect.dispatchEvent(new Event("change"));
+    //     }
+  
+    //   } catch (error) {
+    //     console.error("❌ Error al cargar datos del backend:", error);
+    //   }
+    // }
+    
+    
+    async function cargarDestinos() {
+  try {
+    const response = await fetch("http://localhost:3000/api/destinos");
+    const destinos = await response.json();
+
+    const fromSelect = document.getElementById("from-select");
+    const toSelect = document.getElementById("to-select");
+
+    fromSelect.innerHTML = "<option value=\"\" disabled selected>Seleccione origen</option>";
+    toSelect.innerHTML = "<option value=\"\" disabled selected>Seleccione destino</option>";
+
+    destinos.forEach(destino => {
+      const option1 = document.createElement("option");
+      option1.value = destino.id_destino;
+      option1.textContent = destino.nombre;
+      fromSelect.appendChild(option1);
+
+      const option2 = document.createElement("option");
+      option2.value = destino.id_destino;
+      option2.textContent = destino.nombre;
+      toSelect.appendChild(option2);
+    });
+
+  } catch (error) {
+    console.error("❌ Error al cargar destinos:", error);
+  }
+}
+
+
+document.getElementById("btnBuscarVuelos").addEventListener("click", async () => {
+  const origen = document.getElementById("from-select").value;
+  const destino = document.getElementById("to-select").value;
+  const fecha = document.getElementById("departure-date").value;
+
+  const tieneDestino = destino !== "";
+  const tieneFecha = fecha !== "";
+
+  console.log("📦 Valores seleccionados:");
+  console.log("Origen ID:", origen);
+  console.log("Destino ID:", destino);
+  console.log("Fecha:", fecha);
+
+  let url = "";
+  let parametros = {};
+
+  if (origen && destino && fecha) {
+    url = `http://localhost:3000/api/vuelos/origen-destino-fecha?origen=${origen}&destino=${destino}&fecha=${fecha}`;
+    parametros.tipo = "origen + destino + fecha";
+  } else if (origen && destino) {
+    url = `http://localhost:3000/api/vuelos/origen-destino?origen=${origen}&destino=${destino}`;
+    parametros.tipo = "origen + destino";
+  } else if (origen && fecha) {
+    url = `http://localhost:3000/api/vuelos/origen-fecha?origen=${origen}&fecha=${fecha}`;
+    parametros.tipo = "origen + fecha";
+  } else if (origen) {
+    url = `http://localhost:3000/api/vuelos/origen/${origen}`;
+    parametros.tipo = "solo origen";
+  } else {
+    console.warn("⚠️ Por favor selecciona al menos un origen");
+    return;
+  }
+
+  console.log("🔍 URL que se enviará:", url);
+  console.log("🔍 Filtro aplicado:", parametros.tipo);
+
+  try {
+    const response = await fetch(url);
+    const vuelos = await response.json();
+    console.log("✅ Vuelos recibidos:", vuelos);
+
+    if (vuelos.length === 0) {
+      alert("No se encontraron vuelos para esos filtros");
+    } else {
+      // Aquí podrías llenar el select de vuelos
       const flightSelect = document.getElementById("flight-select");
-      const fromSelect = document.getElementById("from-select");
-      const airplaneSelect = document.getElementById("airplane-select");
-      const dateInput = document.getElementById("departure-date");
-  
-      try {
-        const response = await fetch("http://localhost:3000/api/vuelos");
-        const vuelos = await response.json();
-        todosLosVuelos = vuelos; // Guardar vuelos globalmente
-  
-        // Limpiar todo
-        fromSelect.innerHTML = "";
-        flightSelect.innerHTML = "";
-        airplaneSelect.innerHTML = "";
-        dateInput.value = "";
-  
-        const origenesUnicos = new Set();
-  
-        vuelos.forEach(vuelo => {
-          origenesUnicos.add(vuelo.origen);
-        });
-  
-        // Poblar el combo "I am buying from"
-        origenesUnicos.forEach(origen => {
-          const option = document.createElement("option");
-          option.value = origen;
-          option.textContent = origen;
-          fromSelect.appendChild(option);
-        });
-  
-        // Evento: al cambiar de origen, filtrar vuelos
-        fromSelect.addEventListener("change", () => {
-          const origenSeleccionado = fromSelect.value;
-          flightSelect.innerHTML = "";
-  
-          const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
-  
-          vuelosFiltrados.forEach(vuelo => {
-            const option = document.createElement("option");
-            option.value = vuelo.id_vuelo;
-            option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
-            option.dataset.modelo = vuelo.modelo;
-            option.dataset.fecha = vuelo.fecha;
-            flightSelect.appendChild(option);
-          });
-  
-          // Seleccionar el primer vuelo si existe
-          if (flightSelect.options.length > 0) {
-            flightSelect.dispatchEvent(new Event("change"));
-          }
-        });
-  
-        // Evento: al cambiar de vuelo, actualizar avión y fecha
-        flightSelect.addEventListener("change", () => {
-          const selectedOption = flightSelect.options[flightSelect.selectedIndex];
-          const modelo = selectedOption.dataset.modelo;
-          const fecha = selectedOption.dataset.fecha;
-  
-          // Actualizar avión
-          airplaneSelect.innerHTML = "";
-          const optionModelo = document.createElement("option");
-          optionModelo.textContent = modelo;
-          airplaneSelect.appendChild(optionModelo);
-  
-          // Actualizar fecha
-          dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
-        });
-  
-        // Opcional: seleccionar el primer origen al cargar
-        if (fromSelect.options.length > 0) {
-          fromSelect.selectedIndex = 0;
-          fromSelect.dispatchEvent(new Event("change"));
-        }
-  
-      } catch (error) {
-        console.error("❌ Error al cargar datos del backend:", error);
-      }
+      flightSelect.innerHTML = "<option disabled selected>Seleccione vuelo</option>";
+
+      vuelos.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v.id_vuelo;
+        opt.textContent = `${v.origen} ➜ ${v.destino} - ${new Date(v.fecha).toLocaleDateString()}`;
+        flightSelect.appendChild(opt);
+      });
     }
+
+  } catch (error) {
+    console.error("❌ Error al buscar vuelos:", error);
+  }
+});
+
+
+
+
   </script>
   
 
