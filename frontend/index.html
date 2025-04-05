@@ -280,12 +280,12 @@
 
     destinos.forEach(destino => {
       const option1 = document.createElement("option");
-      option1.value = destino.id_destino;
+      option1.value = destino.id;
       option1.textContent = destino.nombre;
       fromSelect.appendChild(option1);
 
       const option2 = document.createElement("option");
-      option2.value = destino.id_destino;
+      option2.value = destino.id;
       option2.textContent = destino.nombre;
       toSelect.appendChild(option2);
     });
