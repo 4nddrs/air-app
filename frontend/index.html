@@ -9,6 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js"
         integrity="sha256-MAgcygDRahs+F/Nk5Vz387whB4kSK9NXlDN3w58LLq0=" crossorigin="anonymous"></script>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="js/control.js"></script>
+<script src="js/script.js"></script>
+
     <title>Aerolíneas Rafael Pabón</title>
 </head>
 
@@ -25,27 +28,42 @@
             <h1>Book your flight with us!</h1>
             <div class="flight-container">
 
-                <label>I am buying from</label>
-<select id="from-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <!-- <label>I am buying from</label>
+                <select id="from-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select> -->
 
-<label>Select a flight:</label>
-<select id="flight-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <label>I am going from</label>
+                <select id="from-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
 
-<label>Select an Airplane:</label>
-<select id="airplane-select" class="flight-select">
-  <option selected disabled>Loading...</option>
-</select>
+                <label>I am going to</label>
+                <select id="to-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
 
-<label>Departure Date:</label>
-<input type="date" id="departure-date" class="flight-select" />
+                <label>Departure Date:</label>
+                <input type="date" id="departure-date" class="flight-select" />
+
+                <button id="btnBuscarVuelos">Buscar vuelo</button>
+
+                <br>
+                <label>Select a flight:</label>
+                <select id="flight-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
+
+                <label>Select an Airplane:</label>
+                <select id="airplane-select" class="flight-select">
+                <option selected disabled>Loading...</option>
+                </select>
+
+                
+ 
 
 
             </div>
-    
             <div class="showcase">
                 <h2 class="guide-title">Seats guide</h2>
                 <ul class="showcase-content">
@@ -154,6 +172,7 @@
 
     <script src="script.js"></script>
     <script src="control.js"></script>
+    console.log("🚀 control.js cargado correctamente");
     
 
 <div class="seat-map" id="seat-map"></div>
@@ -165,317 +184,305 @@
       cargarVuelos();
     });
   
-    async function cargarVuelos() {
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarDestinos(); // Al inicio, carga los destinos
+    });
+
+    // async function cargarVuelos() {
+    //   const flightSelect = document.getElementById("flight-select");
+    //   const fromSelect = document.getElementById("from-select");
+    //   const airplaneSelect = document.getElementById("airplane-select");
+    //   const dateInput = document.getElementById("departure-date");
+  
+    //   try {
+    //     const response = await fetch("http://localhost:3000/api/vuelos");
+    //     const vuelos = await response.json();
+    //     todosLosVuelos = vuelos; // Guardar vuelos globalmente
+  
+    //     // Limpiar todo
+    //     fromSelect.innerHTML = "";
+    //     flightSelect.innerHTML = "";
+    //     airplaneSelect.innerHTML = "";
+    //     dateInput.value = "";
+  
+    //     const origenesUnicos = new Set();
+  
+    //     vuelos.forEach(vuelo => {
+    //       origenesUnicos.add(vuelo.origen);
+    //     });
+  
+    //     // Poblar el combo "I am buying from"
+    //     origenesUnicos.forEach(origen => {
+    //       const option = document.createElement("option");
+    //       option.value = origen;
+    //       option.textContent = origen;
+    //       fromSelect.appendChild(option);
+    //     });
+  
+    //     // Evento: al cambiar de origen, filtrar vuelos
+    //     fromSelect.addEventListener("change", () => {
+    //       const origenSeleccionado = fromSelect.value;
+    //       flightSelect.innerHTML = "";
+  
+    //       const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
+  
+    //       vuelosFiltrados.forEach(vuelo => {
+    //         const option = document.createElement("option");
+    //         option.value = vuelo.id_vuelo;
+    //         option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
+    //         option.dataset.modelo = vuelo.modelo;
+    //         option.dataset.fecha = vuelo.fecha;
+    //         flightSelect.appendChild(option);
+    //       });
+  
+    //       // Seleccionar el primer vuelo si existe
+    //       if (flightSelect.options.length > 0) {
+    //         flightSelect.dispatchEvent(new Event("change"));
+    //       }
+    //     });
+  
+    //     // Evento: al cambiar de vuelo, actualizar avión y fecha
+    //     flightSelect.addEventListener("change", () => {
+    //       const selectedOption = flightSelect.options[flightSelect.selectedIndex];
+    //       const modelo = selectedOption.dataset.modelo;
+    //       const fecha = selectedOption.dataset.fecha;
+  
+    //       // Actualizar avión
+    //       airplaneSelect.innerHTML = "";
+    //       const optionModelo = document.createElement("option");
+    //       optionModelo.textContent = modelo;
+    //       airplaneSelect.appendChild(optionModelo);
+  
+    //       // Actualizar fecha
+    //       dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
+    //     });
+  
+    //     // Opcional: seleccionar el primer origen al cargar
+    //     if (fromSelect.options.length > 0) {
+    //       fromSelect.selectedIndex = 0;
+    //       fromSelect.dispatchEvent(new Event("change"));
+    //     }
+  
+    //   } catch (error) {
+    //     console.error("❌ Error al cargar datos del backend:", error);
+    //   }
+    // }
+    
+    
+    async function cargarDestinos() {
+  try {
+    const response = await fetch("http://localhost:3000/api/destinos");
+    const destinos = await response.json();
+
+    const fromSelect = document.getElementById("from-select");
+    const toSelect = document.getElementById("to-select");
+
+    fromSelect.innerHTML = "<option value=\"\" disabled selected>Seleccione origen</option>";
+    toSelect.innerHTML = "<option value=\"\" disabled selected>Seleccione destino</option>";
+
+    destinos.forEach(destino => {
+      const option1 = document.createElement("option");
+      option1.value = destino.id;
+      option1.textContent = destino.nombre;
+      fromSelect.appendChild(option1);
+
+      const option2 = document.createElement("option");
+      option2.value = destino.id;
+      option2.textContent = destino.nombre;
+      toSelect.appendChild(option2);
+    });
+
+  } catch (error) {
+    console.error("❌ Error al cargar destinos:", error);
+  }
+}
+
+
+document.getElementById("btnBuscarVuelos").addEventListener("click", async () => {
+  const origen = document.getElementById("from-select").value;
+  const destino = document.getElementById("to-select").value;
+  const fecha = document.getElementById("departure-date").value;
+  const flightSelect = document.getElementById("flight-select");
+  const airplaneSelect = document.getElementById("airplane-select");
+  
+  flightSelect.addEventListener("change", () => {
+    const selectedOption = flightSelect.options[flightSelect.selectedIndex];
+  const tipoAvion = selectedOption.dataset.tipo;
+  const idVuelo = selectedOption.value;
+  const modelo = selectedOption.dataset.tipo;
+
+  try {
+    // 1. Obtener datos del avión
+    const naveRes = fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
+    const nave = naveRes.json();
+
+    // 2. Obtener asientos reales
+    const asientosRes = fetch(`http://localhost:3000/api/asientos/${idVuelo}`);
+    const asientosBD = asientosRes.json();
+
+    // 3. Render dinámico desde BD
+    renderDynamicSeatMap(nave.filas, nave.columnas, asientosBD);
+
+  } catch (error) {
+    console.error("❌ Error al cargar avión y asientos:", error);
+  }
+
+
+// Actualiza el avión en el select
+airplaneSelect.innerHTML = "";
+const airplaneOption = document.createElement("option");
+airplaneOption.textContent = modelo;
+airplaneSelect.appendChild(airplaneOption);
+
+// Llama al backend para obtener los asientos reales
+fetch(`http://localhost:3000/api/asientos/${idVuelo}`)
+  .then(response => response.json())
+  .then(asientos => {
+    console.log("🟢 Asientos recibidos:", asientos);
+    renderAsientosDesdeBD(modelo, asientos);
+  })
+  .catch(error => {
+    console.error("❌ Error al obtener asientos del vuelo:", error);
+  });
+  
+    // Limpiar y mostrar el modelo del avión
+    airplaneSelect.innerHTML = "";
+    const option = document.createElement("option");
+    option.textContent = tipoAvion;
+    airplaneSelect.appendChild(option);
+  });
+  
+
+  const tieneDestino = destino !== "";
+  const tieneFecha = fecha !== "";
+
+  console.log("📦 Valores seleccionados:");
+  console.log("Origen ID:", origen);
+  console.log("Destino ID:", destino);
+  console.log("Fecha:", fecha);
+
+  let url = "";
+  let parametros = {};
+
+  if (origen && destino && fecha) {
+    url = `http://localhost:3000/api/vuelos/origen-destino-fecha?origen=${origen}&destino=${destino}&fecha=${fecha}`;
+    parametros.tipo = "origen + destino + fecha";
+  } else if (origen && destino) {
+    url = `http://localhost:3000/api/vuelos/origen-destino?origen=${origen}&destino=${destino}`;
+    parametros.tipo = "origen + destino";
+  } else if (origen && fecha) {
+    url = `http://localhost:3000/api/vuelos/origen-fecha?origen=${origen}&fecha=${fecha}`;
+    parametros.tipo = "origen + fecha";
+  } else if (origen) {
+    url = `http://localhost:3000/api/vuelos/origen/${origen}`;
+    parametros.tipo = "solo origen";
+  } else {
+    console.warn("⚠️ Por favor selecciona al menos un origen");
+    return;
+  }
+
+  console.log("🔍 URL que se enviará:", url);
+  console.log("🔍 Filtro aplicado:", parametros.tipo);
+
+  try {
+    const response = await fetch(url);
+    const vuelos = await response.json();
+    console.log("✅ Vuelos recibidos:", vuelos);
+
+    if (vuelos.length === 0) {
+      alert("No se encontraron vuelos para esos filtros");
+    } else {
+      // Aquí podrías llenar el select de vuelos
       const flightSelect = document.getElementById("flight-select");
-      const fromSelect = document.getElementById("from-select");
-      const airplaneSelect = document.getElementById("airplane-select");
-      const dateInput = document.getElementById("departure-date");
-  
-      try {
-        const response = await fetch("http://localhost:3000/api/vuelos");
-        const vuelos = await response.json();
-        todosLosVuelos = vuelos; // Guardar vuelos globalmente
-  
-        // Limpiar todo
-        fromSelect.innerHTML = "";
-        flightSelect.innerHTML = "";
-        airplaneSelect.innerHTML = "";
-        dateInput.value = "";
-  
-        const origenesUnicos = new Set();
-  
-        vuelos.forEach(vuelo => {
-          origenesUnicos.add(vuelo.origen);
-        });
-  
-        // Poblar el combo "I am buying from"
-        origenesUnicos.forEach(origen => {
-          const option = document.createElement("option");
-          option.value = origen;
-          option.textContent = origen;
-          fromSelect.appendChild(option);
-        });
-  
-        // Evento: al cambiar de origen, filtrar vuelos
-        fromSelect.addEventListener("change", () => {
-          const origenSeleccionado = fromSelect.value;
-          flightSelect.innerHTML = "";
-  
-          const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
-  
-          vuelosFiltrados.forEach(vuelo => {
-            const option = document.createElement("option");
-            option.value = vuelo.id_vuelo;
-            option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
-            option.dataset.modelo = vuelo.modelo;
-            option.dataset.fecha = vuelo.fecha;
-            flightSelect.appendChild(option);
-          });
-  
-          // Seleccionar el primer vuelo si existe
-          if (flightSelect.options.length > 0) {
-            flightSelect.dispatchEvent(new Event("change"));
-          }
-        });
-  
-        // Evento: al cambiar de vuelo, actualizar avión y fecha
-        flightSelect.addEventListener("change", () => {
-          const selectedOption = flightSelect.options[flightSelect.selectedIndex];
-          const modelo = selectedOption.dataset.modelo;
-          const fecha = selectedOption.dataset.fecha;
-  
-          // Actualizar avión
-          airplaneSelect.innerHTML = "";
-          const optionModelo = document.createElement("option");
-          optionModelo.textContent = modelo;
-          airplaneSelect.appendChild(optionModelo);
-  
-          // Actualizar fecha
-          dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
-        });
-  
-        // Opcional: seleccionar el primer origen al cargar
-        if (fromSelect.options.length > 0) {
-          fromSelect.selectedIndex = 0;
-          fromSelect.dispatchEvent(new Event("change"));
-        }
-  
-      } catch (error) {
-        console.error("❌ Error al cargar datos del backend:", error);
-      }
+      flightSelect.innerHTML = "<option disabled selected>Seleccione vuelo</option>";
+
+      vuelos.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v.id;
+        opt.dataset.tipo = v.tipo;
+        opt.textContent = `${v.origen} ➜ ${v.destino} - ${new Date(v.fecha).toLocaleDateString()}`;
+        flightSelect.appendChild(opt);
+      });
     }
+
+  } catch (error) {
+    console.error("❌ Error al buscar vuelos:", error);
+  }
+});
+
+
+
+
   </script>
   
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 📌 Datos de los aviones
-    const seatConfigurations = {
-   Boeing737: [
-    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01'], unavailable: ['A01'], prenium: ['C01'] },
-    { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02'], unavailable: ['F02'], prenium: ['A02', 'B02', 'C02', 'D02', 'E02'] },
-    { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03'], unavailable: ['F03'], standard: ['A03', 'B03', 'C03', 'D03', 'E03'] },
-    { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04'], unavailable: ['B04', 'C04'], standard: ['A04', 'D04', 'E04', 'F04'] },
-    { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'], standard: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'] },
-    { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06'], unavailable: ['E06', 'F06'], standard: ['A06', 'B06', 'C06', 'D06'] },
-    { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07'], unavailable: ['E07', 'F07'], standard: ['A07', 'B07', 'C07', 'D07'] },
-    { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'], standard: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'] },
-    { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09'], unavailable: ['B09', 'C09'], standard: ['A09', 'D09', 'E09', 'F09'] },
-    { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10'], unavailable: ['D10'], standard: ['A10', 'B10', 'C10', 'E10', 'F10'] },
-    { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'] },
-    { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'], standard: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'] },
-    { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'] },
-    { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'] },
-    { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15'], unavailable: ['C15', 'D15'], standard: ['A15', 'B15', 'E15', 'F15'] },
-    { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'], standard: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'] },
-    { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'] },
-    { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'] },
-    { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'] },
-    { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20'], unavailable: ['E20', 'F20'], standard: ['A20', 'B20', 'C20', 'D20'] },
-    { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'] },
-    { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'] },
-    { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'] },
-    { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24'], unavailable: ['C24', 'D24'], standard: ['A24', 'B24', 'E24', 'F24'] },
-    { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'] },
-    { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'] },
-    { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'] },
-    { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'], standard: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'] },
-    { row: 29, seats: ['A29', 'B29', 'C29', 'D29', 'E29', 'F29'], unavailable: ['A29', 'F29'], standard: ['B29', 'C29', 'D29', 'E29'] },
-    { row: 30, seats: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30'], standard: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30'] }
-],
-  AirbusA320: [
-    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01'], unavailable: ['A01'], prenium: ['C01'] },
-    { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02'], unavailable: ['F02'], prenium: ['A02', 'B02', 'C02', 'D02', 'E02'] },
-    { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03'], legroom: ['A03', 'B03', 'C03', 'D03', 'E03'] },
-    { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04'], unavailable: ['B04', 'C04'], legroom: ['A04', 'D04', 'E04', 'F04'] },
-    { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'], front: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05'] },
-    { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06'], unavailable: ['E06', 'F06'], front: ['A06', 'B06', 'C06', 'D06'] },
-    { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07'], unavailable: ['E07', 'F07'], front: ['A07', 'B07', 'C07', 'D07'] },
-    { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'], front: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08'] },
-    { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09'], unavailable: ['B09', 'C09'], standard: ['A09', 'D09', 'E09', 'F09'] },
-    { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10'], unavailable: ['D10'], standard: ['A10', 'B10', 'C10', 'E10', 'F10'] },
-    { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11'] },
-    { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'], legroom: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12'] },
-    { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13'] },
-    { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14'] },
-    { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15'], unavailable: ['C15', 'D15'], standard: ['A15', 'B15', 'E15', 'F15'] },
-    { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'], front: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16'] },
-    { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17'] },
-    { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18'] },
-    { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19'] },
-    { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20'], unavailable: ['E20', 'F20'], standard: ['A20', 'B20', 'C20', 'D20'] },
-    { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21'] },
-    { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22'] },
-    { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23'] },
-    { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24'], unavailable: ['C24', 'D24'], standard: ['A24', 'B24', 'E24', 'F24'] },
-    { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25'] },
-    { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26'] },
-    { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27'] },
-    { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'], standard: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28'] }
-],
-   Boeing787: [
-    { row: 1, seats: ['A01', 'B01', 'C01', 'D01', 'E01', 'F01', 'G01', 'H01', 'I01'], unavailable: ['A01'], prenium: ['C01', 'D01'] },
-        { row: 2, seats: ['A02', 'B02', 'C02', 'D02', 'E02', 'F02', 'G02', 'H02', 'I02'], unavailable: ['A02'], prenium: ['B02', 'C02', 'D02', 'E02'] },
-        { row: 3, seats: ['A03', 'B03', 'C03', 'D03', 'E03', 'F03', 'G03', 'H03', 'I03'], legroom: ['A03', 'B03', 'C03', 'D03', 'E03'] },
-        { row: 4, seats: ['A04', 'B04', 'C04', 'D04', 'E04', 'F04', 'G04', 'H04', 'I04'], unavailable: ['I04'], legroom: ['A04', 'B04', 'C04'] },
-        { row: 5, seats: ['A05', 'B05', 'C05', 'D05', 'E05', 'F05', 'G05', 'H05', 'I05'], front: ['A05', 'B05', 'C05', 'D05', 'E05'] },
-        { row: 6, seats: ['A06', 'B06', 'C06', 'D06', 'E06', 'F06', 'G06', 'H06', 'I06'], unavailable: ['F06'], front: ['A06', 'B06', 'C06', 'D06'] },
-        { row: 7, seats: ['A07', 'B07', 'C07', 'D07', 'E07', 'F07', 'G07', 'H07', 'I07'], unavailable: ['E07', 'F07'], front: ['A07', 'B07', 'C07', 'D07'] },
-        { row: 8, seats: ['A08', 'B08', 'C08', 'D08', 'E08', 'F08', 'G08', 'H08', 'I08'], front: ['A08', 'B08', 'C08', 'D08', 'E08'] },
-        { row: 9, seats: ['A09', 'B09', 'C09', 'D09', 'E09', 'F09', 'G09', 'H09', 'I09'], standard: ['A09', 'B09', 'C09', 'D09', 'E09'] },
-        { row: 10, seats: ['A10', 'B10', 'C10', 'D10', 'E10', 'F10', 'G10', 'H10', 'I10'], standard: ['A10', 'B10', 'C10', 'D10', 'E10'] },
-        { row: 11, seats: ['A11', 'B11', 'C11', 'D11', 'E11', 'F11', 'G11', 'H11', 'I11'], standard: ['A11', 'B11', 'C11', 'D11', 'E11'] },
-        { row: 12, seats: ['A12', 'B12', 'C12', 'D12', 'E12', 'F12', 'G12', 'H12', 'I12'], legroom: ['A12', 'B12', 'C12', 'D12', 'E12'] },
-        { row: 13, seats: ['A13', 'B13', 'C13', 'D13', 'E13', 'F13', 'G13', 'H13', 'I13'], standard: ['A13', 'B13', 'C13', 'D13', 'E13'] },
-        { row: 14, seats: ['A14', 'B14', 'C14', 'D14', 'E14', 'F14', 'G14', 'H14', 'I14'], standard: ['A14', 'B14', 'C14', 'D14', 'E14'] },
-        { row: 15, seats: ['A15', 'B15', 'C15', 'D15', 'E15', 'F15', 'G15', 'H15', 'I15'], unavailable: ['D15'], standard: ['A15', 'B15', 'C15', 'E15', 'F15'] },
-        { row: 16, seats: ['A16', 'B16', 'C16', 'D16', 'E16', 'F16', 'G16', 'H16', 'I16'], front: ['A16', 'B16', 'C16', 'D16', 'E16'] },
-        { row: 17, seats: ['A17', 'B17', 'C17', 'D17', 'E17', 'F17', 'G17', 'H17', 'I17'], standard: ['A17', 'B17', 'C17', 'D17', 'E17'] },
-        { row: 18, seats: ['A18', 'B18', 'C18', 'D18', 'E18', 'F18', 'G18', 'H18', 'I18'], standard: ['A18', 'B18', 'C18', 'D18', 'E18'] },
-        { row: 19, seats: ['A19', 'B19', 'C19', 'D19', 'E19', 'F19', 'G19', 'H19', 'I19'], standard: ['A19', 'B19', 'C19', 'D19', 'E19'] },
-        { row: 20, seats: ['A20', 'B20', 'C20', 'D20', 'E20', 'F20', 'G20', 'H20', 'I20'], unavailable: ['I20'], standard: ['A20', 'B20', 'C20', 'D20', 'E20'] },
-        { row: 21, seats: ['A21', 'B21', 'C21', 'D21', 'E21', 'F21', 'G21', 'H21', 'I21'], standard: ['A21', 'B21', 'C21', 'D21', 'E21'] },
-        { row: 22, seats: ['A22', 'B22', 'C22', 'D22', 'E22', 'F22', 'G22', 'H22', 'I22'], standard: ['A22', 'B22', 'C22', 'D22', 'E22'] },
-        { row: 23, seats: ['A23', 'B23', 'C23', 'D23', 'E23', 'F23', 'G23', 'H23', 'I23'], standard: ['A23', 'B23', 'C23', 'D23', 'E23'] },
-        { row: 24, seats: ['A24', 'B24', 'C24', 'D24', 'E24', 'F24', 'G24', 'H24', 'I24'], unavailable: ['B24'], standard: ['A24', 'C24', 'D24', 'E24', 'F24'] },
-        { row: 25, seats: ['A25', 'B25', 'C25', 'D25', 'E25', 'F25', 'G25', 'H25', 'I25'], standard: ['A25', 'B25', 'C25', 'D25', 'E25'] },
-        { row: 26, seats: ['A26', 'B26', 'C26', 'D26', 'E26', 'F26', 'G26', 'H26', 'I26'], standard: ['A26', 'B26', 'C26', 'D26', 'E26'] },
-        { row: 27, seats: ['A27', 'B27', 'C27', 'D27', 'E27', 'F27', 'G27', 'H27', 'I27'], standard: ['A27', 'B27', 'C27', 'D27', 'E27'] },
-        { row: 28, seats: ['A28', 'B28', 'C28', 'D28', 'E28', 'F28', 'G28', 'H28', 'I28'], unavailable: ['A28'], standard: ['B28', 'C28', 'D28', 'E28', 'F28'] },
-        { row: 29, seats: ['A29', 'B29', 'C29', 'D29', 'E29', 'F29', 'G29', 'H29', 'I29'], standard: ['A29', 'B29', 'C29', 'D29', 'E29'] },
-        { row: 30, seats: ['A30', 'B30', 'C30', 'D30', 'E30', 'F30', 'G30', 'H30', 'I30'], standard: ['A30', 'B30', 'C30', 'D30', 'E30'] },
-        { row: 31, seats: ['A31', 'B31', 'C31', 'D31', 'E31', 'F31', 'G31', 'H31', 'I31'], standard: ['A31', 'B31', 'C31', 'D31', 'E31'] },
-        { row: 32, seats: ['A32', 'B32', 'C32', 'D32', 'E32', 'F32', 'G32', 'H32', 'I32'], standard: ['A32', 'B32', 'C32', 'D32', 'E32'] },
-        { row: 33, seats: ['A33', 'B33', 'C33', 'D33', 'E33', 'F33', 'G33', 'H33', 'I33'], standard: ['A33', 'B33', 'C33', 'D33', 'E33'] },
-        { row: 34, seats: ['A34', 'B34', 'C34', 'D34', 'E34', 'F34', 'G34', 'H34', 'I34'], unavailable: ['A34'], standard: ['B34', 'C34', 'D34', 'E34'] },
-        { row: 35, seats: ['A35', 'B35', 'C35', 'D35', 'E35', 'F35', 'G35', 'H35', 'I35'], standard: ['A35', 'B35', 'C35', 'D35', 'E35'] }
-    ],
-
-  Concorde: [
-    { row: 1, seats: ['A01', 'B01', 'C01', 'D01'], unavailable: ['A01'], prenium: ['C01', 'D01'] },
-    { row: 2, seats: ['A02', 'B02', 'C02', 'D02'], unavailable: ['D02'], prenium: ['A02', 'B02'] },
-    { row: 3, seats: ['A03', 'B03', 'C03', 'D03'], legroom: ['A03', 'B03', 'C03', 'D03'] },
-    { row: 4, seats: ['A04', 'B04', 'C04', 'D04'], unavailable: ['C04'], legroom: ['A04', 'B04', 'D04'] },
-    { row: 5, seats: ['A05', 'B05', 'C05', 'D05'], front: ['A05', 'B05', 'C05', 'D05'] },
-    { row: 6, seats: ['A06', 'B06', 'C06', 'D06'], unavailable: ['D06'], front: ['A06', 'B06', 'C06'] },
-    { row: 7, seats: ['A07', 'B07', 'C07', 'D07'], unavailable: ['B07'], front: ['A07', 'C07', 'D07'] },
-    { row: 8, seats: ['A08', 'B08', 'C08', 'D08'], front: ['A08', 'B08', 'C08', 'D08'] },
-    { row: 9, seats: ['A09', 'B09', 'C09', 'D09'], standard: ['A09', 'B09', 'C09', 'D09'] },
-    { row: 10, seats: ['A10', 'B10', 'C10', 'D10'], standard: ['A10', 'B10', 'C10', 'D10'] },
-    { row: 11, seats: ['A11', 'B11', 'C11', 'D11'], standard: ['A11', 'B11', 'C11', 'D11'] },
-    { row: 12, seats: ['A12', 'B12', 'C12', 'D12'], legroom: ['A12', 'B12', 'C12', 'D12'] },
-    { row: 13, seats: ['A13', 'B13', 'C13', 'D13'], standard: ['A13', 'B13', 'C13', 'D13'] },
-    { row: 14, seats: ['A14', 'B14', 'C14', 'D14'], standard: ['A14', 'B14', 'C14', 'D14'] },
-    { row: 15, seats: ['A15', 'B15', 'C15', 'D15'], unavailable: ['C15'], standard: ['A15', 'B15', 'D15'] },
-    { row: 16, seats: ['A16', 'B16', 'C16', 'D16'], front: ['A16', 'B16', 'C16', 'D16'] },
-    { row: 17, seats: ['A17', 'B17', 'C17', 'D17'], standard: ['A17', 'B17', 'C17', 'D17'] },
-    { row: 18, seats: ['A18', 'B18', 'C18', 'D18'], standard: ['A18', 'B18', 'C18', 'D18'] },
-    { row: 19, seats: ['A19', 'B19', 'C19', 'D19'], standard: ['A19', 'B19', 'C19', 'D19'] },
-    { row: 20, seats: ['A20', 'B20', 'C20', 'D20'], unavailable: ['D20'], standard: ['A20', 'B20', 'C20'] },
-    { row: 21, seats: ['A21', 'B21', 'C21', 'D21'], standard: ['A21', 'B21', 'C21', 'D21'] },
-    { row: 22, seats: ['A22', 'B22', 'C22', 'D22'], standard: ['A22', 'B22', 'C22', 'D22'] },
-    { row: 23, seats: ['A23', 'B23', 'C23', 'D23'], standard: ['A23', 'B23', 'C23', 'D23'] },
-    { row: 24, seats: ['A24', 'B24', 'C24', 'D24'], unavailable: ['C24'], standard: ['A24', 'B24', 'D24'] },
-    { row: 25, seats: ['A25', 'B25', 'C25', 'D25'], standard: ['A25', 'B25', 'C25', 'D25'] }
-  ],
-   Cessna172: [
-    { row: 1, seats: ['A01', 'B01'], unavailable: ['A01'], prenium: ['B01'] },
-    { row: 2, seats: ['A02', 'B02'], unavailable: [], prenium: [] },
-    { row: 3, seats: ['A03', 'B03'], unavailable: [], prenium: [] },
-    { row: 4, seats: ['A04', 'B04'], unavailable: [], prenium: [] },
-  ],
-  EmbraerE190: [
-    { row: 1, seats: ['A01', 'B01', 'C01', 'D01'], unavailable: ['A01'], prenium: [] },
-    { row: 2, seats: ['A02', 'B02', 'C02', 'D02'], unavailable: [], prenium: [] },
-    { row: 3, seats: ['A03', 'B03', 'C03', 'D03'], unavailable: [], prenium: [] },
-    { row: 4, seats: ['A04', 'B04', 'C04', 'D04'], unavailable: [], prenium: [] },
-    { row: 5, seats: ['A05', 'B05', 'C05', 'D05'], unavailable: [], prenium: [] },
-    { row: 6, seats: ['A06', 'B06', 'C06', 'D06'], unavailable: [], prenium: [] },
-    { row: 7, seats: ['A07', 'B07', 'C07', 'D07'], unavailable: [], prenium: [] },
-    { row: 8, seats: ['A08', 'B08', 'C08', 'D08'], unavailable: [], prenium: [] },
-    { row: 9, seats: ['A09', 'B09', 'C09', 'D09'], unavailable: [], prenium: [] },
-    { row: 10, seats: ['A10', 'B10', 'C10', 'D10'], unavailable: [], prenium: [] },
-    { row: 11, seats: ['A11', 'B11', 'C11', 'D11'], unavailable: [], prenium: [] },
-    { row: 12, seats: ['A12', 'B12', 'C12', 'D12'], unavailable: [], prenium: [] },
-    { row: 13, seats: ['A13', 'B13', 'C13', 'D13'], unavailable: [], prenium: [] },
-    { row: 14, seats: ['A14', 'B14', 'C14', 'D14'], unavailable: [], prenium: [] },
-    { row: 15, seats: ['A15', 'B15', 'C15', 'D15'], unavailable: [], prenium: [] },
-    { row: 16, seats: ['A16', 'B16', 'C16', 'D16'], unavailable: [], prenium: [] },
-    { row: 17, seats: ['A17', 'B17', 'C17', 'D17'], unavailable: [], prenium: [] },
-    { row: 18, seats: ['A18', 'B18', 'C18', 'D18'], unavailable: [], prenium: [] },
-    { row: 19, seats: ['A19', 'B19', 'C19', 'D19'], unavailable: [], prenium: [] },
-    { row: 20, seats: ['A20', 'B20', 'C20', 'D20'], unavailable: [], prenium: [] },
-    { row: 21, seats: ['A21', 'B21', 'C21', 'D21'], unavailable: [], prenium: [] },
-    { row: 22, seats: ['A22', 'B22', 'C22', 'D22'], unavailable: [], prenium: [] },
-    { row: 23, seats: ['A23', 'B23', 'C23', 'D23'], unavailable: [], prenium: [] },
-    { row: 24, seats: ['A24', 'B24', 'C24', 'D24'], unavailable: [], prenium: [] },
-  ],
-    };
-
-    function renderSeatMap(airplane) {
-      const seatData = seatConfigurations[airplane] || [];
+  <script>
+    function renderAsientosDesdeBD(modelo, asientosBD) {
+      const config = seatConfigurations[modelo]; // Tu plantilla base por modelo
+      if (!config) {
+        console.warn("⚠️ Modelo de avión no reconocido:", modelo);
+        return;
+      }
+    
       const seatMapContainer = document.getElementById('seat-map');
-      seatMapContainer.innerHTML = ""; // 🔄 Limpiar el mapa antes de renderizar
-
-      seatData.forEach(rowData => {
+      seatMapContainer.innerHTML = "";
+    
+      config.forEach(rowData => {
         const rowDiv = document.createElement('div');
         rowDiv.classList.add('row');
-
+    
         const leftColumn = document.createElement('div');
         leftColumn.classList.add('column-left');
-
-        rowData.seats.slice(0, Math.ceil(rowData.seats.length / 2)).forEach(seat => {
-          leftColumn.appendChild(createSeatDiv(seat, rowData));
-        });
-
+    
         const centralDiv = document.createElement('div');
         centralDiv.classList.add('central');
         centralDiv.innerText = rowData.row;
-
+    
         const rightColumn = document.createElement('div');
         rightColumn.classList.add('column-right');
-
-        rowData.seats.slice(Math.ceil(rowData.seats.length / 2)).forEach(seat => {
-          rightColumn.appendChild(createSeatDiv(seat, rowData));
+    
+        rowData.seats.slice(0, rowData.seats.length / 2).forEach(seat => {
+          leftColumn.appendChild(crearAsientoDesdeBD(seat, asientosBD));
         });
-
+    
+        rowData.seats.slice(rowData.seats.length / 2).forEach(seat => {
+          rightColumn.appendChild(crearAsientoDesdeBD(seat, asientosBD));
+        });
+    
         rowDiv.appendChild(leftColumn);
         rowDiv.appendChild(centralDiv);
         rowDiv.appendChild(rightColumn);
         seatMapContainer.appendChild(rowDiv);
       });
     }
-
-    function createSeatDiv(seat, rowData) {
-      const seatDiv = document.createElement('div');
-      seatDiv.classList.add('seat');
-
-      // ✅ Asignar clases según tipo de asiento
-      if (rowData.unavailable?.includes(seat)) {
-        seatDiv.classList.add('unavailable');
-      } else if (rowData.prenium?.includes(seat)) {
-        seatDiv.classList.add('prenium');
-      } else if (rowData.legroom?.includes(seat)) {
-        seatDiv.classList.add('legroom');
-      } else if (rowData.front?.includes(seat)) {
-        seatDiv.classList.add('front');
+    
+    function crearAsientoDesdeBD(seat, asientosBD) {
+      const div = document.createElement('div');
+      div.classList.add('seat');
+    
+      const infoAsiento = asientosBD.find(a => a.numero_asiento === seat);
+    
+      if (!infoAsiento) {
+        div.classList.add('standard');
       } else {
-        seatDiv.classList.add('standard');
+        if (infoAsiento.estado === "ocupado") {
+          div.classList.add('unavailable');
+        } else if (infoAsiento.tipo_asiento === "premium") {
+          div.classList.add('prenium');
+        } else {
+          div.classList.add('standard');
+        }
       }
-
-      seatDiv.innerHTML = `<span>${seat}</span>`;
-      return seatDiv;
+    
+      div.innerHTML = `<span>${seat}</span>`;
+      return div;
     }
+    
+  </script>
 
-    // 🚀 Cargar Boeing 737 por defecto
-    renderSeatMap("Boeing737");
 
-    // 🎛️ Evento para cambiar el mapa de asientos
-    document.getElementById("class-select").addEventListener("change", function (event) {
-      renderSeatMap(event.target.value);
-    });
-  });
-</script>
+
+
 
 
   

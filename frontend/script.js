@@ -1,8 +1,6 @@
 // Main page
 const flightSelect = document.getElementById('flight-select');
 const preniumPrice = document.getElementById('seat-prenium-price');
-const legroomPrice = document.getElementById('seat-legroom-price');
-const frontPrice = document.getElementById('seat-front-price');
 const standardPrice = document.getElementById('seat-standard-price');
 const orderContainer = document.getElementById('order-container');
 const detailContainer = document.getElementById('detail-container');
@@ -44,12 +42,12 @@ const closeDescriptionBtn = document.getElementById('close-description');
 
 // Ticket price per flight and per type of seat -- ex: 'NY-CH' is element[0] => [prenium ticket price[0], 
 // legroom ticket price[1], front ticket price[2], standard ticket price[3]]
-const data = [[200, 140, 90, 80], [240, 180, 130, 120], [280, 220, 170, 160], [350, 290, 240, 230], [370, 310, 260, 250],
-[390, 330, 270, 260], [300, 240, 190, 180], [270, 210, 160, 150]];
+const data = [[200, 80], [240, 120], [280, 160], [350, 230], [370, 250],
+[390, 260], [300, 180], [270, 150]];
 
 // Initialize ticket prices in showcase with data from index [0] of the above data array
 const initialFlightRates = data[0];
-let [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = initialFlightRates;
+let [preniumTicketPrice, standardTicketPrice] = initialFlightRates;
 
 const initIndexUnavailableSeats = [...unavailableSeats].map(seat => [...allSeats].indexOf(seat));
 
@@ -80,8 +78,6 @@ function setFlightData(flightIndex, flightName, currentFlightRates) {
 function updateShowcaseContent() {
 
     preniumPrice.innerText = formatMoney(preniumTicketPrice);
-    legroomPrice.innerText = formatMoney(legroomTicketPrice);
-    frontPrice.innerText = formatMoney(frontTicketPrice);
     standardPrice.innerText = formatMoney(standardTicketPrice);
 
 }
@@ -97,18 +93,12 @@ function formatMoney(number) {
 function updateSelectedCount() {
 
     const selectedPreniumSeats = document.querySelectorAll('.row .seat.prenium.selected');
-    const selectedLegroomSeats = document.querySelectorAll('.row .seat.legroom.selected');
-    const selectedFrontSeats = document.querySelectorAll('.row .seat.front.selected');
     const selectedStandardSeats = document.querySelectorAll('.row .seat.standard.selected');
 
     let selectedSeatsCount = (selectedPreniumSeats.length)
-        + (selectedLegroomSeats.length)
-        + (selectedFrontSeats.length)
         + (selectedStandardSeats.length);
 
     currentTotalAmount = (selectedPreniumSeats.length * preniumTicketPrice)
-        + (selectedLegroomSeats.length * legroomTicketPrice)
-        + (selectedFrontSeats.length * frontTicketPrice)
         + (selectedStandardSeats.length * standardTicketPrice);
 
     if (selectedSeatsCount <= 1) {
@@ -118,16 +108,14 @@ function updateSelectedCount() {
     }
 
     let detailPreniumSeats = [selectedPreniumSeats.length, preniumTicketPrice];
-    let detailLegroomSeats = [selectedLegroomSeats.length, legroomTicketPrice];
-    let detailFrontSeats = [selectedFrontSeats.length, frontTicketPrice];
     let detailStandardSeats = [selectedStandardSeats.length, standardTicketPrice];
 
     // Spread operator - Initialize order data based on selected seats (user selection)
-    let orderData = [...detailPreniumSeats, ...detailLegroomSeats, ...detailFrontSeats, ...detailStandardSeats];
+    let orderData = [...detailPreniumSeats, ...detailStandardSeats];
 
     addDataSelection(orderData);
 
-    const seatsIndex = [...selectedPreniumSeats, ...selectedLegroomSeats, ...selectedFrontSeats, ...selectedStandardSeats].map(seat => [...availableSeats].indexOf(seat));
+    const seatsIndex = [...selectedPreniumSeats, ...selectedStandardSeats].map(seat => [...availableSeats].indexOf(seat));
 
     localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
 
@@ -151,7 +139,7 @@ function addDataSelection(arr) {
 // Return a clean array of data for order detail display (DOM update)
 function cleanData(arr) {
 
-    const seatTypes = ['Prenium', 'Extra-legroom', 'Front', 'Standard'];
+    const seatTypes = ['Prenium', 'Standard'];
     const ranks = ['1', '2', '3', '4'];
 
     let notNullValuesIndexes = [];
@@ -575,7 +563,7 @@ function populateUI() {
 
     const selectedFlightRates = JSON.parse(localStorage.getItem('selectedFlightRates'));
     if (selectedFlightRates !== null && selectedFlightRates.length > 0) {
-        [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = selectedFlightRates;
+        [preniumTicketPrice, standardTicketPrice] = selectedFlightRates;
     }
 
     const newSeatsConfig = JSON.parse(localStorage.getItem('indexUnavailableSeats'));
@@ -583,10 +571,6 @@ function populateUI() {
         allSeats.forEach((seat, index) => {
             if (index >= 0 && index <= 11) {
                 seat.className = 'seat prenium';
-            } else if (index >= 12 && index <= 23) {
-                seat.className = 'seat legroom';
-            } else if (index >= 24 && index <= 47) {
-                seat.className = 'seat front';
             } else if (index >= 48 && index <= 95) {
                 seat.className = 'seat standard';
             }
@@ -787,79 +771,37 @@ function checkPasswords(input1, input2) {
 // Event Listeners main page
 
 // Flight select event and ticket price attribution per type of seat - also reset seats map on flight change
-flightSelect.addEventListener('change', (e) => {
+// Flight select event dinámico con mapa real de asientos
+flightSelect.addEventListener('change', async (e) => {
+    const idVuelo = flightSelect.value;
 
-    let flightRatesIndex = +e.target.value;
-    let currentFlightRatesArr = getCurrentFlightRates(flightRatesIndex);
-    currentFlight = formatFlightName(flightSelect.options[flightSelect.selectedIndex].text);
+    try {
+        // 1. Obtener datos del avión
+        const response = await fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
+        const nave = await response.json(); // { tipo, filas, columnas }
 
-    // Destructuring
-    [preniumTicketPrice, legroomTicketPrice, frontTicketPrice, standardTicketPrice] = currentFlightRatesArr;
+        // 2. Mostrar info del avión en el select de Airplane
+        const airplaneSelect = document.getElementById("airplane-select");
+        airplaneSelect.innerHTML = "";
+        const opt = document.createElement("option");
+        opt.textContent = `${nave.tipo} (${nave.filas} x ${nave.columnas})`;
+        airplaneSelect.appendChild(opt);
 
-    setFlightData(e.target.selectedIndex, currentFlight, currentFlightRatesArr);
+        // 3. Renderizar dinámicamente el mapa de asientos
+        renderSeatMapFromNave(nave.filas, nave.columnas);
 
-    const shiftUnavailableSeatsIndex = () => {
+        // 4. Reset de selección, totales y contadores
+        currentSeatsPositions = [];
+        localStorage.removeItem('seatsPositions');
+        updateSelectedCount();
+        updateShowcaseContent();
+        updateDOM();
 
-        const shiftValuesMap = new Map();
-        shiftValuesMap.set(flightSelect.options[0], 0);
-        shiftValuesMap.set(flightSelect.options[1], 2);
-        shiftValuesMap.set(flightSelect.options[2], 8);
-        shiftValuesMap.set(flightSelect.options[3], 21);
-        shiftValuesMap.set(flightSelect.options[4], 11);
-        shiftValuesMap.set(flightSelect.options[5], 9);
-        shiftValuesMap.set(flightSelect.options[6], 22);
-        shiftValuesMap.set(flightSelect.options[7], 17);
-
-        const indexUnavailableSeats = [...initIndexUnavailableSeats].map(index => {
-            if (index + shiftValuesMap.get(flightSelect.options[flightSelect.selectedIndex]) > allSeats.length - 1)
-                return index + shiftValuesMap.get(flightSelect.options[flightSelect.selectedIndex]) - allSeats.length;
-            else return index + shiftValuesMap.get(flightSelect.options[flightSelect.selectedIndex]);
-        });
-
-        localStorage.setItem('indexUnavailableSeats', JSON.stringify(indexUnavailableSeats.sort((a, b) => a - b)));
-
-        return indexUnavailableSeats.sort((a, b) => a - b);
+    } catch (err) {
+        console.error("❌ Error al obtener nave del vuelo:", err);
     }
-
-    const updateSeatsMap = () => {
-        [...allSeats].map((seat, index) => {
-
-            seat.classList.remove('selected');
-
-            if (seat.className == 'seat unavailable') {
-                seat.classList.remove('unavailable');
-                if (index >= 0 && index <= 11) {
-                    seat.classList.add('prenium');
-                } else if (index >= 12 && index <= 23) {
-                    seat.classList.add('legroom');
-                } else if (index >= 24 && index <= 47) {
-                    seat.classList.add('front');
-                } else if (index >= 48 && index <= 95) {
-                    seat.classList.add('standard');
-                }
-            }
-
-            if ([...shiftUnavailableSeatsIndex()].indexOf(index) !== -1) {
-                return seat.className = 'seat unavailable';
-            }
-
-        });
-
-        availableSeats = document.querySelectorAll('.row .seat:not(.unavailable)');
-        unavailableSeats = document.querySelectorAll('.row .seat.unavailable');
-
-    }
-
-    // Reset currentSeatsPositions array and remove seatsPositions item from local storage
-    currentSeatsPositions = [];
-    localStorage.removeItem('seatsPositions');
-
-    updateSeatsMap();
-    updateShowcaseContent();
-    updateSelectedCount();
-    updateDOM();
-
 });
+
 
 // Seat click event
 seatMap.addEventListener('click', (e) => {
