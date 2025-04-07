@@ -223,24 +223,6 @@ app.get('/api/vuelos/origen-fecha', async (req, res) => {
 });
 
 //Buscar pasajero
-app.get("/api/pasajeros/buscar", async (req, res) => {
-  const { q } = req.query; // lo que el usuario está escribiendo
-
-  if (!q || q.length < 2) {
-    return res.json([]); // mínimo 2 caracteres
-  }
-
-  try {
-    const result = await pool.query(
-      "SELECT pasaporte, nombre FROM pasajeros WHERE pasaporte::text LIKE $1 LIMIT 10",
-      [`${q}%`]
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error("❌ Error al buscar pasajeros:", err);
-    res.status(500).send("Error del servidor");
-  }
-});
 app.get("/api/pasajeros/sugerencias", async (req, res) => {
   const { q } = req.query;
 
