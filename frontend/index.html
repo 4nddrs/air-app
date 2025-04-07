@@ -151,9 +151,11 @@
                 </p>
                 <!-- Input for passport -->
                 <div class="name-input">
-                    <label for="customer-passport">Enter your passport:</label>
-                    <input type="number" id="customer-passport" placeholder="Enter passport">
+                  <label for="customer-passport">Enter your passport:</label>
+                  <input type="text" id="customer-passport" placeholder="Enter passport" autocomplete="off">
                 </div>
+                <div id="sugerencias-passport" class="autocomplete-box"></div>
+
                  <!-- Input for name -->
                  <div class="name-input">
                     <label for="customer-name">Enter your name:</label>
@@ -347,6 +349,61 @@ fetch(`http://localhost:3000/api/asientos/${idVuelo}`)
   }
 });
 
+const box = document.getElementById("sugerencias-passport");
+const nombrePasa = document.getElementById("customer-name");
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("customer-passport");
+
+  if (!input) {
+    console.error("❌ No se encontró el input #customer-passport");
+    return;
+  }
+
+  input.addEventListener("keyup", async () => {
+    const valor = input.value.trim();
+    console.log(`🔍 Buscando pasajero con: "${valor}" → ASCII: [${[...valor].map(c => c.charCodeAt(0))}]`);
+    
+    if (valor.length < 2) return;
+
+    try {
+      box.innerHTML = "";
+      const response = await fetch(`http://localhost:3000/api/pasajeros/sugerencias?q=${valor}`);
+      const sugerencias = await response.json();
+
+      console.log("📦 Sugerencias recibidas:", sugerencias);
+      
+      sugerencias.forEach(pasaporte => {
+      const item = document.createElement("div");
+      item.classList.add("sugerencia-item");
+      item.textContent = `${pasaporte.pasaporte} - ${pasaporte.nombre_completo}`;// - ${pasaporte.nombre}
+      item.addEventListener("click", () => {
+        input.value = pasaporte.pasaporte;
+        nombrePasa.value= pasaporte.nombre_completo;
+        box.innerHTML = "";
+      });
+      box.appendChild(item);
+    });
+    } catch (error) {
+      console.error("❌ Error al obtener sugerencias:", error);
+    }
+  });
+});
+
+
+function mostrarSugerencias(lista) {
+  const ul = document.getElementById("sugerencias-passport");
+  ul.innerHTML = ""; // Limpiar antes
+
+  lista.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item.pasaporte;
+    li.addEventListener("click", () => {
+      document.getElementById("customer-passport").value = item.pasaporte;
+      ul.innerHTML = "";
+    });
+    ul.appendChild(li);
+  });
+}
 
 
 

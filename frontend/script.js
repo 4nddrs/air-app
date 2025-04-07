@@ -564,6 +564,7 @@ function populateUI() {
     const selectedFlightRates = JSON.parse(localStorage.getItem('selectedFlightRates'));
     if (selectedFlightRates !== null && selectedFlightRates.length > 0) {
         [preniumTicketPrice, standardTicketPrice] = selectedFlightRates;
+        [preniumTicketPrice, standardTicketPrice] = selectedFlightRates;
     }
 
     const newSeatsConfig = JSON.parse(localStorage.getItem('indexUnavailableSeats'));

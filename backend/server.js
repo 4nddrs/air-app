@@ -26,6 +26,7 @@ pool.query("SELECT NOW()", (err, res) => {
 });
 
 
+
 app.get("/", (req, res) => {
   res.send("🚀 Servidor de vuelos en ejecución");
 });
@@ -280,6 +281,26 @@ app.get("/api/vuelo/nave/:id_vuelo", async (req, res) => {
   }
 });
 
+
+
+//Buscar pasajero
+app.get("/api/pasajeros/sugerencias", async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    const result = await pool.query(`
+      SELECT pasaporte, nombre_completo
+      FROM pasajeros 
+      WHERE CAST(pasaporte AS TEXT) LIKE $1
+      LIMIT 5
+    `, [`${q}%`]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Error al buscar sugerencias de pasaportes:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
 
 
 

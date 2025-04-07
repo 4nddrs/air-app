@@ -369,3 +369,25 @@ footer .inner-footer .footer-banner .p-methods { color: #2e86de; font-size: 1.9r
   .message-container .message { height: 98vh; width: 90%; overflow-y: scroll; } }
 
 @media screen and (max-width: 306px) { body { display: none; } }
+
+
+
+
+
+.autocomplete-box {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  position: absolute;
+  z-index: 10;
+}
+
+.sugerencia-item {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.sugerencia-item:hover {
+  background-color: #e0e0e0;
+}
