@@ -20,38 +20,60 @@ document.getElementById("reserve-btn").addEventListener("click", () => {
     enviarDatosAlServidor("reserva");
 });
 
-function renderSeatMapFromNave(filas, columnas) {
+function renderSeatMapFromNave(filas, columnas, asientosBD) {
     const seatMapContainer = document.getElementById("seat-map");
+    
     seatMapContainer.innerHTML = "";
   
     const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   
     for (let i = 1; i <= filas; i++) {
-      const rowDiv = document.createElement('div');
-      rowDiv.classList.add('row');
+      const rowDiv = document.createElement("div");
+      rowDiv.classList.add("row");
   
-      const leftColumn = document.createElement('div');
-      leftColumn.classList.add('column-left');
+      const leftColumn = document.createElement("div");
+      leftColumn.classList.add("column-left");
   
-      const rightColumn = document.createElement('div');
-      rightColumn.classList.add('column-right');
+      const rightColumn = document.createElement("div");
+      rightColumn.classList.add("column-right");
   
-      const centralDiv = document.createElement('div');
-      centralDiv.classList.add('central');
+      const centralDiv = document.createElement("div");
+      centralDiv.classList.add("central");
       centralDiv.innerText = i;
   
       for (let j = 0; j < columnas; j++) {
         const letra = letras[j];
         const numero_asiento = `${letra}${i.toString().padStart(2, '0')}`;
   
-        const seatDiv = document.createElement('div');
-        seatDiv.classList.add('seat', 'standard');
-        seatDiv.innerHTML = `<span>${numero_asiento}</span>`;
+        const div = document.createElement("div");
+        div.classList.add("seat");
+
+        console.log("🟢 Asientos recibidos (antes de render):", asientosBD);
+console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length);
+
+  
+        // Buscar el asiento en la base de datos
+        const asientoBD = asientosBD.find(a => a.numero_asiento === numero_asiento);
+  
+        if (asientoBD.estado === "Vendido" || asientoBD.estado === "Reservado") {
+            div.classList.add("unavailable");
+          } else {
+            // Solo marcamos como prenium si está libre
+            if (asientoBD.tipo_asiento === "Ejecutiva") {
+              div.classList.add("prenium");
+            } else if (asientoBD.tipo_asiento === "Economica") {
+              div.classList.add("standard");
+            } else {
+              div.classList.add("prenium"); // fallback
+            }
+          }
+  
+        div.innerHTML = `<span>${numero_asiento}</span>`;
   
         if (j < columnas / 2) {
-          leftColumn.appendChild(seatDiv);
+          leftColumn.appendChild(div);
         } else {
-          rightColumn.appendChild(seatDiv);
+          rightColumn.appendChild(div);
         }
       }
   
@@ -62,37 +84,46 @@ function renderSeatMapFromNave(filas, columnas) {
     }
   }
   
+  
+  
 
   document.getElementById("flight-select").addEventListener("change", async () => {
     const flightSelect = document.getElementById("flight-select");
     const airplaneSelect = document.getElementById("airplane-select");
-  
+    
     const idVuelo = flightSelect.value;
-  
-    // ✅ Validación de seguridad antes de hacer el fetch
-    console.log("✈️ ID vuelo seleccionado:", idVuelo);
     if (!idVuelo) {
-      console.warn("⚠️ No se ha seleccionado ningún vuelo.");
+      console.warn("⚠️ No se ha seleccionado vuelo.");
       return;
     }
   
+    console.log("✈️ ID vuelo seleccionado:", idVuelo);
+  
     try {
-      const response = await fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
-      const nave = await response.json();
+      // 1. Traer datos de la nave
+      const naveRes = await fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
+      const nave = await naveRes.json();
+
+      
   
-      // Mostrar tipo de avión en el select
+      // 2. Traer datos de los asientos
+      const asientosRes = await fetch(`http://localhost:3000/api/asientos/${idVuelo}`);
+      const asientosBD = await asientosRes.json();
+  
+      // 3. Mostrar info del avión en el <select>
       airplaneSelect.innerHTML = "";
-      const option = document.createElement("option");
-      option.textContent = `${nave.tipo} (${nave.filas}x${nave.columnas})`;
-      airplaneSelect.appendChild(option);
+      const opt = document.createElement("option");
+      opt.textContent = `${nave.tipo} (${nave.filas}x${nave.columnas})`;
+      airplaneSelect.appendChild(opt);
   
-      // Renderizar el mapa de asientos
-      renderSeatMapFromNave(nave.filas, nave.columnas);
+      // 4. Renderizar el mapa de asientos combinando BD + nave
+      renderSeatMapFromNave(nave.filas, nave.columnas, asientosBD);
   
     } catch (err) {
-      console.error("❌ Error al obtener información del avión:", err);
+      console.error("❌ Error al cargar avión y asientos:", err);
     }
   });
+  
   
   
 

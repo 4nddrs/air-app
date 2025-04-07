@@ -65,14 +65,29 @@ app.get("/api/naves", async (req, res) => {
   }
 });
 
+//app.get("/api/asientos/:id_vuelo", async (req, res) => {
+  //const { id_vuelo } = req.params;
+  //try {
+  //  const result = await pool.query(`
+  //    SELECT a.numero_asiento, a.tipo_asiento, a.estado
+ //     FROM reservas rv
+  //    JOIN asientos a ON rv.asiento_id = a.id
+  //    WHERE a.vuelo_id = $1
+  //  `, [id_vuelo]);
+  //  res.json(result.rows);
+  //} catch (err) {
+  //  console.error("❌ Error al obtener asientos:", err);
+   // res.status(500).send("Error del servidor");
+  //}
+//});
+
 app.get("/api/asientos/:id_vuelo", async (req, res) => {
   const { id_vuelo } = req.params;
   try {
     const result = await pool.query(`
-      SELECT a.numero_asiento, a.clase, rv.estado
-      FROM reservas_ventas rv
-      JOIN asientos a ON rv.id_asiento = a.id_asiento
-      WHERE rv.id_vuelo = $1
+      SELECT a.numero_asiento, a.tipo_asiento, a.estado
+      FROM asientos a
+      WHERE a.vuelo_id = $1
     `, [id_vuelo]);
     res.json(result.rows);
   } catch (err) {
@@ -220,6 +235,47 @@ app.get('/api/vuelos/origen-fecha', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error("❌ Error al filtrar por origen y fecha:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
+
+app.get("/api/asientos/:idVuelo", async (req, res) => {
+  const { idVuelo } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT a.id, a.numero_asiento, a.estado, a.tipo_asiento
+      FROM asientos a
+      WHERE a.vuelo_id = $1
+    `, [idVuelo]);
+
+    res.json(result.rows); // Devolver array de asientos asociados al vuelo
+  } catch (err) {
+    console.error("❌ Error al obtener asientos del vuelo:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
+
+
+// ✅ Nueva ruta para obtener nave del vuelo por ID
+app.get("/api/vuelo/nave/:id_vuelo", async (req, res) => {
+  const { id_vuelo } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT n.tipo, n.filas, n.columnas
+      FROM vuelos v
+      JOIN naves n ON v.id_nave = n.id
+      WHERE v.id = $1
+    `, [id_vuelo]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Nave no encontrada para ese vuelo" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("❌ Error al obtener la nave del vuelo:", err);
     res.status(500).send("Error del servidor");
   }
 });

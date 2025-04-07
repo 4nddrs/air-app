@@ -189,85 +189,7 @@
       cargarDestinos(); // Al inicio, carga los destinos
     });
 
-    // async function cargarVuelos() {
-    //   const flightSelect = document.getElementById("flight-select");
-    //   const fromSelect = document.getElementById("from-select");
-    //   const airplaneSelect = document.getElementById("airplane-select");
-    //   const dateInput = document.getElementById("departure-date");
-  
-    //   try {
-    //     const response = await fetch("http://localhost:3000/api/vuelos");
-    //     const vuelos = await response.json();
-    //     todosLosVuelos = vuelos; // Guardar vuelos globalmente
-  
-    //     // Limpiar todo
-    //     fromSelect.innerHTML = "";
-    //     flightSelect.innerHTML = "";
-    //     airplaneSelect.innerHTML = "";
-    //     dateInput.value = "";
-  
-    //     const origenesUnicos = new Set();
-  
-    //     vuelos.forEach(vuelo => {
-    //       origenesUnicos.add(vuelo.origen);
-    //     });
-  
-    //     // Poblar el combo "I am buying from"
-    //     origenesUnicos.forEach(origen => {
-    //       const option = document.createElement("option");
-    //       option.value = origen;
-    //       option.textContent = origen;
-    //       fromSelect.appendChild(option);
-    //     });
-  
-    //     // Evento: al cambiar de origen, filtrar vuelos
-    //     fromSelect.addEventListener("change", () => {
-    //       const origenSeleccionado = fromSelect.value;
-    //       flightSelect.innerHTML = "";
-  
-    //       const vuelosFiltrados = todosLosVuelos.filter(v => v.origen === origenSeleccionado);
-  
-    //       vuelosFiltrados.forEach(vuelo => {
-    //         const option = document.createElement("option");
-    //         option.value = vuelo.id_vuelo;
-    //         option.textContent = `${vuelo.origen} - ${vuelo.destino} / ${new Date(vuelo.fecha).toLocaleDateString()}`;
-    //         option.dataset.modelo = vuelo.modelo;
-    //         option.dataset.fecha = vuelo.fecha;
-    //         flightSelect.appendChild(option);
-    //       });
-  
-    //       // Seleccionar el primer vuelo si existe
-    //       if (flightSelect.options.length > 0) {
-    //         flightSelect.dispatchEvent(new Event("change"));
-    //       }
-    //     });
-  
-    //     // Evento: al cambiar de vuelo, actualizar avión y fecha
-    //     flightSelect.addEventListener("change", () => {
-    //       const selectedOption = flightSelect.options[flightSelect.selectedIndex];
-    //       const modelo = selectedOption.dataset.modelo;
-    //       const fecha = selectedOption.dataset.fecha;
-  
-    //       // Actualizar avión
-    //       airplaneSelect.innerHTML = "";
-    //       const optionModelo = document.createElement("option");
-    //       optionModelo.textContent = modelo;
-    //       airplaneSelect.appendChild(optionModelo);
-  
-    //       // Actualizar fecha
-    //       dateInput.value = fecha.split("T")[0]; // yyyy-mm-dd
-    //     });
-  
-    //     // Opcional: seleccionar el primer origen al cargar
-    //     if (fromSelect.options.length > 0) {
-    //       fromSelect.selectedIndex = 0;
-    //       fromSelect.dispatchEvent(new Event("change"));
-    //     }
-  
-    //   } catch (error) {
-    //     console.error("❌ Error al cargar datos del backend:", error);
-    //   }
-    // }
+   
     
     
     async function cargarDestinos() {
@@ -309,24 +231,38 @@ document.getElementById("btnBuscarVuelos").addEventListener("click", async () =>
   flightSelect.addEventListener("change", () => {
     const selectedOption = flightSelect.options[flightSelect.selectedIndex];
   const tipoAvion = selectedOption.dataset.tipo;
-  const idVuelo = selectedOption.value;
+  
   const modelo = selectedOption.dataset.tipo;
+  document.getElementById("flight-select").addEventListener("change", async () => {
+    const idVuelo = document.getElementById("flight-select").value;
+    if (!idVuelo) return;
+  
+    try {
+      const naveRes = await fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
+      const nave = await naveRes.json();
 
-  try {
-    // 1. Obtener datos del avión
-    const naveRes = fetch(`http://localhost:3000/api/vuelo/nave/${idVuelo}`);
-    const nave = naveRes.json();
+      console.log("🛩️ Nave recibida:", nave);
+  
+      const asientosRes = await fetch(`http://localhost:3000/api/asientos/${idVuelo}`);
+const asientosBD = await asientosRes.json();
 
-    // 2. Obtener asientos reales
-    const asientosRes = fetch(`http://localhost:3000/api/asientos/${idVuelo}`);
-    const asientosBD = asientosRes.json();
-
-    // 3. Render dinámico desde BD
-    renderDynamicSeatMap(nave.filas, nave.columnas, asientosBD);
-
-  } catch (error) {
-    console.error("❌ Error al cargar avión y asientos:", error);
-  }
+  
+      console.log("🟢 Asientos recibidos:", asientosBD);
+  
+      const airplaneSelect = document.getElementById("airplane-select");
+      airplaneSelect.innerHTML = "";
+      const opt = document.createElement("option");
+      opt.textContent = `${nave.tipo} (${nave.filas}x${nave.columnas})`;
+      airplaneSelect.appendChild(opt);
+  
+      renderSeatMapFromNave(nave.filas, nave.columnas, asientosBD);
+  
+    } catch (err) {
+      console.error("❌ Error al cargar avión y asientos:", err);
+    }
+  });
+  
+  
 
 
 // Actualiza el avión en el select
@@ -417,65 +353,67 @@ fetch(`http://localhost:3000/api/asientos/${idVuelo}`)
   </script>
   
   <script>
-    function renderAsientosDesdeBD(modelo, asientosBD) {
-      const config = seatConfigurations[modelo]; // Tu plantilla base por modelo
-      if (!config) {
-        console.warn("⚠️ Modelo de avión no reconocido:", modelo);
-        return;
-      }
-    
-      const seatMapContainer = document.getElementById('seat-map');
+    function renderSeatMapFromNave(filas, columnas, asientosBD) {
+      const seatMapContainer = document.getElementById("seat-map");
       seatMapContainer.innerHTML = "";
     
-      config.forEach(rowData => {
-        const rowDiv = document.createElement('div');
-        rowDiv.classList.add('row');
+      const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-        const leftColumn = document.createElement('div');
-        leftColumn.classList.add('column-left');
+      for (let i = 1; i <= filas; i++) {
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("row");
     
-        const centralDiv = document.createElement('div');
-        centralDiv.classList.add('central');
-        centralDiv.innerText = rowData.row;
+        const leftColumn = document.createElement("div");
+        leftColumn.classList.add("column-left");
     
-        const rightColumn = document.createElement('div');
-        rightColumn.classList.add('column-right');
+        const rightColumn = document.createElement("div");
+        rightColumn.classList.add("column-right");
     
-        rowData.seats.slice(0, rowData.seats.length / 2).forEach(seat => {
-          leftColumn.appendChild(crearAsientoDesdeBD(seat, asientosBD));
-        });
+        const centralDiv = document.createElement("div");
+        centralDiv.classList.add("central");
+        centralDiv.innerText = i;
     
-        rowData.seats.slice(rowData.seats.length / 2).forEach(seat => {
-          rightColumn.appendChild(crearAsientoDesdeBD(seat, asientosBD));
-        });
+        for (let j = 0; j < columnas; j++) {
+          const letra = letras[j];
+          const numero_asiento = `${letra}${i}`;
+    
+          const div = document.createElement("div");
+          div.classList.add("seat");
+
+          console.log("🟢 Asientos recibidos (antes de render):", asientosBD);
+console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length);
+
+    
+          // Buscar el asiento en la base de datos
+          const asientoBD = asientosBD.find(a => a.numero_asiento === numero_asiento);
+    
+          if (asientoBD) {
+            if (asientoBD.estado === "Vendido") {
+              div.classList.add("unavailable");
+            } else if (asientoBD.tipo_asiento === "Ejecutiva") {
+              div.classList.add("prenium");
+            } else {
+              div.classList.add("standard");
+            }
+          } else {
+            // Por defecto si no está registrado aún en BD
+            div.classList.add("standard");
+          }
+    
+          div.innerHTML = `<span>${numero_asiento}</span>`;
+    
+          if (j < columnas / 2) {
+            leftColumn.appendChild(div);
+          } else {
+            rightColumn.appendChild(div);
+          }
+        }
     
         rowDiv.appendChild(leftColumn);
         rowDiv.appendChild(centralDiv);
         rowDiv.appendChild(rightColumn);
         seatMapContainer.appendChild(rowDiv);
-      });
-    }
-    
-    function crearAsientoDesdeBD(seat, asientosBD) {
-      const div = document.createElement('div');
-      div.classList.add('seat');
-    
-      const infoAsiento = asientosBD.find(a => a.numero_asiento === seat);
-    
-      if (!infoAsiento) {
-        div.classList.add('standard');
-      } else {
-        if (infoAsiento.estado === "ocupado") {
-          div.classList.add('unavailable');
-        } else if (infoAsiento.tipo_asiento === "premium") {
-          div.classList.add('prenium');
-        } else {
-          div.classList.add('standard');
-        }
       }
-    
-      div.innerHTML = `<span>${seat}</span>`;
-      return div;
     }
     
   </script>
