@@ -250,7 +250,7 @@ app.get("/api/asientos/:idVuelo", async (req, res) => {
       WHERE a.vuelo_id = $1
     `, [idVuelo]);
 
-    res.json(result.rows); // Devolver array de asientos asociados al vuelo
+    res.json(result.rows); // ✅ Devuelve los asientos incluyendo su ID
   } catch (err) {
     console.error("❌ Error al obtener asientos del vuelo:", err);
     res.status(500).send("Error del servidor");

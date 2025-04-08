@@ -416,7 +416,7 @@ function mostrarSugerencias(lista) {
     
       const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-      for (let i = 1; i <= filas; i++) {
+      for (let i = 0; i < filas; i++) { // i -> fila (letra)
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row");
     
@@ -428,24 +428,19 @@ function mostrarSugerencias(lista) {
     
         const centralDiv = document.createElement("div");
         centralDiv.classList.add("central");
-        centralDiv.innerText = i;
+        centralDiv.innerText = letras[i]; // Muestra la letra de fila (opcional)
     
-        for (let j = 0; j < columnas; j++) {
-          const letra = letras[j];
-          const numero_asiento = `${letra}${i}`;
+        for (let j = 1; j <= columnas; j++) { // j -> número (columna)
+          const letra = letras[i];
+          const numero_asiento = `${letra}${j}`;
     
           const div = document.createElement("div");
           div.classList.add("seat");
-
-          console.log("🟢 Asientos recibidos (antes de render):", asientosBD);
-console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length);
-
     
-          // Buscar el asiento en la base de datos
           const asientoBD = asientosBD.find(a => a.numero_asiento === numero_asiento);
     
           if (asientoBD) {
-            if (asientoBD.estado === "Vendido") {
+            if (asientoBD.estado === "Vendido" || asientoBD.estado === "Reservado") {
               div.classList.add("unavailable");
             } else if (asientoBD.tipo_asiento === "Ejecutiva") {
               div.classList.add("prenium");
@@ -453,13 +448,12 @@ console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length
               div.classList.add("standard");
             }
           } else {
-            // Por defecto si no está registrado aún en BD
             div.classList.add("standard");
           }
     
           div.innerHTML = `<span>${numero_asiento}</span>`;
     
-          if (j < columnas / 2) {
+          if (j <= columnas / 2) {
             leftColumn.appendChild(div);
           } else {
             rightColumn.appendChild(div);
@@ -472,8 +466,7 @@ console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length
         seatMapContainer.appendChild(rowDiv);
       }
     }
-    
-  </script>
+    </script>
 
 
 

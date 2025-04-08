@@ -4,8 +4,8 @@ const { Pool } = require('pg');
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'AirDB',
-  password: '1234',
+  database: 'vuelos',
+  password: 'templario2233',
   port: 5432, // puerto por defecto de PostgreSQL
 });
 
