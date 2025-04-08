@@ -32,6 +32,46 @@
                 <select id="from-select" class="flight-select">
                 <option selected disabled>Loading...</option>
                 </select> -->
+                <label>I am buying from</label>
+<select id="buying-from" class="flight-select">
+  <option selected disabled>Select a location</option>
+  <optgroup label="🇲🇽 México">
+    <option value="cdmx">Ciudad de México</option>
+    <option value="guadalajara">Guadalajara</option>
+    <option value="monterrey">Monterrey</option>
+    <option value="puebla">Puebla</option>
+    <option value="tijuana">Tijuana</option>
+    <option value="merida">Mérida</option>
+    <option value="cancun">Cancún</option>
+    <option value="queretaro">Querétaro</option>
+    <option value="leon">León</option>
+    <option value="toluca">Toluca</option>
+  </optgroup>
+  <optgroup label="🇪🇸 España">
+    <option value="madrid">Madrid</option>
+    <option value="barcelona">Barcelona</option>
+    <option value="valencia">Valencia</option>
+    <option value="sevilla">Sevilla</option>
+    <option value="zaragoza">Zaragoza</option>
+    <option value="bilbao">Bilbao</option>
+    <option value="malaga">Málaga</option>
+    <option value="alicante">Alicante</option>
+    <option value="granada">Granada</option>
+    <option value="vigo">Vigo</option>
+  </optgroup>
+  <optgroup label="🇳🇬 Nigeria">
+    <option value="lagos">Lagos</option>
+    <option value="abuja">Abuja</option>
+    <option value="ibadan">Ibadan</option>
+    <option value="kano">Kano</option>
+    <option value="benin">Benín City</option>
+    <option value="portharcourt">Port Harcourt</option>
+    <option value="kaduna">Kaduna</option>
+    <option value="jos">Jos</option>
+    <option value="enugu">Enugu</option>
+    <option value="maiduguri">Maiduguri</option>
+  </optgroup>
+</select>
 
                 <label>I am going from</label>
                 <select id="from-select" class="flight-select">
@@ -473,7 +513,32 @@ function mostrarSugerencias(lista) {
 
 
 
-
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const ubicacionSelect = document.getElementById("buying-from");
+      
+        if (!ubicacionSelect) return;
+      
+        ubicacionSelect.addEventListener("change", () => {
+          const ciudad = ubicacionSelect.value;
+      
+          const ciudadesMexico = ["cdmx", "guadalajara", "monterrey", "puebla", "tijuana", "merida", "cancun", "queretaro", "leon", "toluca"];
+          const ciudadesEspana = ["madrid", "barcelona", "valencia", "sevilla", "zaragoza", "bilbao", "malaga", "alicante", "granada", "vigo"];
+          const ciudadesNigeria = ["lagos", "abuja", "ibadan", "kano", "benin", "portharcourt", "kaduna", "jos", "enugu", "maiduguri"];
+      
+          if (ciudadesMexico.includes(ciudad)) {
+            console.log("🟢 Conectado al servidor de América");
+          } else if (ciudadesEspana.includes(ciudad)) {
+            console.log("🟢 Conectado al servidor de Europa");
+          } else if (ciudadesNigeria.includes(ciudad)) {
+            console.log("🟢 Conectado al servidor de África");
+          } else {
+            console.log("⚠️ Región no reconocida");
+          }
+        });
+      });
+      </script>
+      
 
   
 
