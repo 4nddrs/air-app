@@ -12,13 +12,17 @@ socket.on("disconnect", () => {
     console.log("🔴 Desconectado del servidor WebSocket");
 });
 
-document.getElementById("buy-btn").addEventListener("click", () => {
-    enviarDatosAlServidor("compra");
+//Actualizar estado botones
+document.getElementById("buy-btn").addEventListener("click", async () => {
+  //await actualizarEstadoAsientos(asientosSeleccionados,"Vendido",vuelo_id);
+  enviarDatosAlServidor("Vendido");
 });
 
-document.getElementById("reserve-btn").addEventListener("click", () => {
-    enviarDatosAlServidor("reserva");
+document.getElementById("reserve-btn").addEventListener("click", async () => {
+  //await actualizarEstadoAsientos(asientosSeleccionados,"Reservado",vuelo_id);
+  enviarDatosAlServidor("Reservado");
 });
+//----------------------------------------------------------------------------------
 
 function renderSeatMapFromNave(filas, columnas, asientosBD) {
     const seatMapContainer = document.getElementById("seat-map");
@@ -125,12 +129,50 @@ console.log("Tipo:", Array.isArray(asientosBD), "| Longitud:", asientosBD.length
   });
   
   
+  //EstadoAsientos
+  async function actualizarEstadoAsientos(asientos, nuevoEstado, idVuelo) {
+  try {
+    for (const numero of asientos) {
+      
+    
+      const asientoTexto = typeof numero === "string" ? numero : numero.querySelector("span")?.innerText.trim();
+
+  if (!asientoTexto) {
+    console.warn("⚠️ No se pudo obtener el número del asiento:", numero);
+    continue;
+  }
+
+  console.log("📨 Datos enviados al servidor:", asientoTexto, nuevoEstado, idVuelo);
+
+      const res = await fetch("http://localhost:3000/api/asientos/cambiar-estado", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          vuelo_id: idVuelo,
+          numero_asiento: asientoTexto,
+          nuevo_estado: nuevoEstado,
+        }),
+      });
+
+      const data = await res.json(); // 👈 Aquí lanza error si no es JSON
+
+      console.log("✅ Estado actualizado:", data);
+    }
+  } catch (error) {
+    console.error("❌ Error al cambiar estado del asiento :", error);
+  }
+}
+//----------------------------------------------------------------------------------
   
 
 function enviarDatosAlServidor(tipo) {
     const pasaporte = document.getElementById("customer-passport").value;
     const nombre = document.getElementById("customer-name").value;
     const detalle = document.getElementById("detail-output").textContent;
+    const vuelo_id = document.getElementById("flight-select").value;
+const asientosSeleccionados = document.querySelectorAll(".seat.selected");
 
     if (!pasaporte || !nombre) {
         alert("Por favor, completa todos los campos.");
@@ -146,6 +188,7 @@ function enviarDatosAlServidor(tipo) {
 
     socket.emit("ordenVuelo", datos);
     console.log("📨 Datos enviados al servidor:", datos);
+    actualizarEstadoAsientos(asientosSeleccionados,tipo,vuelo_id);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

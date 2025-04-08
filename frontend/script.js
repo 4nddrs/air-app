@@ -94,6 +94,7 @@ function updateSelectedCount() {
 
     const selectedPreniumSeats = document.querySelectorAll('.row .seat.prenium.selected');
     const selectedStandardSeats = document.querySelectorAll('.row .seat.standard.selected');
+    const selectedLegroomSeats = document.querySelectorAll('.row .seat.legroom.selected');
 
     let selectedSeatsCount = (selectedPreniumSeats.length)
         + (selectedStandardSeats.length);
@@ -139,7 +140,7 @@ function addDataSelection(arr) {
 // Return a clean array of data for order detail display (DOM update)
 function cleanData(arr) {
 
-    const seatTypes = ['Prenium', 'Standard'];
+    const seatTypes = ['Prenium', 'Standard', 'Legroom'];
     const ranks = ['1', '2', '3', '4'];
 
     let notNullValuesIndexes = [];
@@ -574,7 +575,7 @@ function populateUI() {
                 seat.className = 'seat prenium';
             } else if (index >= 48 && index <= 95) {
                 seat.className = 'seat standard';
-            }
+            } 
 
             if (newSeatsConfig.indexOf(index) > -1) {
                 seat.className = 'seat unavailable';

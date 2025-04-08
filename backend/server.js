@@ -5,6 +5,8 @@ const { Server } = require("socket.io");
 const pool = require("./config/db");
 
 const app = express();
+app.use(express.json()); // 👈 ¡Esto es necesario para parsear JSON del body!
+
 
 // 👉 Habilita CORS para todas las rutas REST
 app.use(cors());
@@ -303,6 +305,30 @@ app.get("/api/pasajeros/sugerencias", async (req, res) => {
 });
 
 
+//api estado asientos
+app.post("/api/asientos/cambiar-estado", async (req, res) => {
+  const { vuelo_id, numero_asiento, nuevo_estado } = req.body;
+  console.log("📦 Info recibida:", vuelo_id, numero_asiento,nuevo_estado);
+  if (!vuelo_id || !numero_asiento || !nuevo_estado) {
+    return res.status(400).send("Faltan datos requeridos");
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE asientos 
+       SET estado = $1,
+           ultima_actualizacion_epoch = EXTRACT(EPOCH FROM NOW())
+       WHERE vuelo_id = $2 AND numero_asiento = $3`,
+      [nuevo_estado, vuelo_id, numero_asiento]
+    );
+
+    res.json({ success: true, mensaje: "Estado actualizado correctamente" });
+  } catch (err) {
+    console.error("❌ Error al actualizar estado:", err);
+    res.status(500).send("Error en el servidor");
+  }
+});
+//----------------------------------------------------------------------
 
 
 // ---------------- WebSocket ----------------

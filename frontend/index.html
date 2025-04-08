@@ -440,8 +440,10 @@ function mostrarSugerencias(lista) {
           const asientoBD = asientosBD.find(a => a.numero_asiento === numero_asiento);
     
           if (asientoBD) {
-            if (asientoBD.estado === "Vendido" || asientoBD.estado === "Reservado") {
+            if (asientoBD.estado === "Vendido") {
               div.classList.add("unavailable");
+            } else if (asientoBD.estado === "Reservado"){
+            div.classList.add("legroom");
             } else if (asientoBD.tipo_asiento === "Ejecutiva") {
               div.classList.add("prenium");
             } else {
